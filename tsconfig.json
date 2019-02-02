@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "extends": "@loopback/build/config/tsconfig.common.json",
+  "include": [
+    "src",
+    "test",
+    "index.ts",
+    "globals.d.ts"
+  ],
+  "exclude": [
+    "node_modules/**",
+    "packages/*/node_modules/**",
+    "**/*.d.ts"
+  ],
+  "compilerOptions": {
+    "typeRoots": [
+      "./src/types",
+      "./node_modules/@types"
+    ]
+  }
+}
