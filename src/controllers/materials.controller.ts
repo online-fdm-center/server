@@ -16,20 +16,20 @@ import {
   del,
   requestBody,
 } from '@loopback/rest';
-import {Materials} from '../models';
-import {MaterialsRepository} from '../repositories';
+import { Materials } from '../models';
+import { MaterialsRepository } from '../repositories';
 
 export class MaterialsController {
   constructor(
     @repository(MaterialsRepository)
-    public materialsRepository : MaterialsRepository,
-  ) {}
+    public materialsRepository: MaterialsRepository,
+  ) { }
 
   @post('/materials', {
     responses: {
       '200': {
         description: 'Materials model instance',
-        content: {'application/json': {schema: {'x-ts-type': Materials}}},
+        content: { 'application/json': { schema: { 'x-ts-type': Materials } } },
       },
     },
   })
@@ -41,7 +41,7 @@ export class MaterialsController {
     responses: {
       '200': {
         description: 'Materials model count',
-        content: {'application/json': {schema: CountSchema}},
+        content: { 'application/json': { schema: CountSchema } },
       },
     },
   })
@@ -57,7 +57,7 @@ export class MaterialsController {
         description: 'Array of Materials model instances',
         content: {
           'application/json': {
-            schema: {type: 'array', items: {'x-ts-type': Materials}},
+            schema: { type: 'array', items: { 'x-ts-type': Materials } },
           },
         },
       },
@@ -73,7 +73,7 @@ export class MaterialsController {
     responses: {
       '200': {
         description: 'Materials PATCH success count',
-        content: {'application/json': {schema: CountSchema}},
+        content: { 'application/json': { schema: CountSchema } },
       },
     },
   })
@@ -88,7 +88,7 @@ export class MaterialsController {
     responses: {
       '200': {
         description: 'Materials model instance',
-        content: {'application/json': {schema: {'x-ts-type': Materials}}},
+        content: { 'application/json': { schema: { 'x-ts-type': Materials } } },
       },
     },
   })

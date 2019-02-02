@@ -16,20 +16,20 @@ import {
   del,
   requestBody,
 } from '@loopback/rest';
-import {Product} from '../models';
-import {ProductRepository} from '../repositories';
+import { Product } from '../models';
+import { ProductRepository } from '../repositories';
 
 export class ProductController {
   constructor(
     @repository(ProductRepository)
-    public productRepository : ProductRepository,
-  ) {}
+    public productRepository: ProductRepository,
+  ) { }
 
   @post('/products', {
     responses: {
       '200': {
         description: 'Product model instance',
-        content: {'application/json': {schema: {'x-ts-type': Product}}},
+        content: { 'application/json': { schema: { 'x-ts-type': Product } } },
       },
     },
   })
@@ -41,7 +41,7 @@ export class ProductController {
     responses: {
       '200': {
         description: 'Product model count',
-        content: {'application/json': {schema: CountSchema}},
+        content: { 'application/json': { schema: CountSchema } },
       },
     },
   })
@@ -57,7 +57,7 @@ export class ProductController {
         description: 'Array of Product model instances',
         content: {
           'application/json': {
-            schema: {type: 'array', items: {'x-ts-type': Product}},
+            schema: { type: 'array', items: { 'x-ts-type': Product } },
           },
         },
       },
@@ -73,7 +73,7 @@ export class ProductController {
     responses: {
       '200': {
         description: 'Product PATCH success count',
-        content: {'application/json': {schema: CountSchema}},
+        content: { 'application/json': { schema: CountSchema } },
       },
     },
   })
@@ -88,7 +88,7 @@ export class ProductController {
     responses: {
       '200': {
         description: 'Product model instance',
-        content: {'application/json': {schema: {'x-ts-type': Product}}},
+        content: { 'application/json': { schema: { 'x-ts-type': Product } } },
       },
     },
   })

@@ -1,23 +1,23 @@
-import {DefaultCrudRepository, juggler, BelongsToAccessor, repository} from '@loopback/repository';
-import {Product, Materials, File, User} from '../models';
-import {DbDataSource} from '../datasources';
-import {inject, Getter} from '@loopback/core';
-import {MaterialsRepository, FileRepository, UserRepository} from '../repositories';
+import { DefaultCrudRepository, juggler, BelongsToAccessor, repository } from '@loopback/repository';
+import { Product, Materials, ThreeDFile, User } from '../models';
+import { DbDataSource } from '../datasources';
+import { inject, Getter } from '@loopback/core';
+import { MaterialsRepository, FileRepository, UserRepository } from '../repositories';
 
 export class ProductRepository extends DefaultCrudRepository<
   Product,
   typeof Product.prototype.id
-> {
+  > {
   public readonly material: BelongsToAccessor<
     Materials,
     typeof Product.prototype.id
   >;
   public readonly file: BelongsToAccessor<
-    File,
+    ThreeDFile,
     typeof Product.prototype.id
   >;
   public readonly user: BelongsToAccessor<
-  User,
+    User,
     typeof Product.prototype.id
   >;
   constructor(

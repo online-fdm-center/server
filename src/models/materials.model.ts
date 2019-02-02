@@ -1,5 +1,5 @@
-import {Entity, model, property, hasMany} from '@loopback/repository';
-import {Product} from './product.model'
+import { Entity, model, property, hasMany } from '@loopback/repository';
+import { Product } from './product.model'
 
 @model()
 export class Materials extends Entity {
@@ -26,7 +26,7 @@ export class Materials extends Entity {
   })
   count?: number;
 
-  @hasMany(() => Product, {keyTo: 'materialId'})
+  @hasMany(() => Product, { keyTo: 'materialId' })
   products?: Product[];
 
   constructor(data?: Partial<Materials>) {

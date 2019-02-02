@@ -3,7 +3,6 @@
   "editor.tabCompletion": "on",
   "editor.tabSize": 2,
   "editor.trimAutoWhitespace": true,
-  "editor.formatOnSave": true,
 
   "files.exclude": {
     "**/.DS_Store": true,
@@ -17,5 +16,7 @@
   "files.trimTrailingWhitespace": true,
 
   "tslint.ignoreDefinitionFiles": true,
-  "typescript.tsdk": "./node_modules/typescript/lib"
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true
 }

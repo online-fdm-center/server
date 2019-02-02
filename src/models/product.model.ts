@@ -1,5 +1,5 @@
-import {Entity, model, property, belongsTo} from '@loopback/repository';
-import {File, Materials, User} from './index'
+import { Entity, model, property, belongsTo } from '@loopback/repository';
+import { ThreeDFile, Materials, User } from './index'
 
 @model({
   settings: {
@@ -47,7 +47,7 @@ export class Product extends Entity {
   @belongsTo(() => User)
   userId?: number;
 
-  @belongsTo(() => File)
+  @belongsTo(() => ThreeDFile)
   fileId?: number;
 
   @belongsTo(() => Materials)

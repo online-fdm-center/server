@@ -1,15 +1,15 @@
-import {BootMixin} from '@loopback/boot';
-import {ApplicationConfig} from '@loopback/core';
+import { BootMixin } from '@loopback/boot';
+import { ApplicationConfig } from '@loopback/core';
 import {
   RestExplorerBindings,
   RestExplorerComponent,
 } from '@loopback/rest-explorer';
-import {RepositoryMixin} from '@loopback/repository';
-import {RestApplication} from '@loopback/rest';
-import {ServiceMixin} from '@loopback/service-proxy';
+import { RepositoryMixin } from '@loopback/repository';
+import { RestApplication } from '@loopback/rest';
+import { ServiceMixin } from '@loopback/service-proxy';
 import * as path from 'path';
-import {MySequence} from './sequence';
-import {MyAuthStrategyProvider} from './providers/auth-strategy.provider';
+import { MySequence } from './sequence';
+import { MyAuthStrategyProvider } from './providers/auth-strategy.provider';
 import {
   AuthenticationComponent,
   AuthenticationBindings,

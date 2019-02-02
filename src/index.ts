@@ -1,7 +1,7 @@
-import {OnlineFdmCenterApplication} from './application';
-import {ApplicationConfig} from '@loopback/core';
+import { OnlineFdmCenterApplication } from './application';
+import { ApplicationConfig } from '@loopback/core';
 
-export {OnlineFdmCenterApplication};
+export { OnlineFdmCenterApplication };
 
 export async function main(options: ApplicationConfig = {}) {
   const app = new OnlineFdmCenterApplication(options);

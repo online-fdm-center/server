@@ -1,8 +1,13 @@
-import {Entity, model, property, hasMany} from '@loopback/repository';
-import {Product} from './product.model'
+import { Entity, model, property, hasMany } from '@loopback/repository';
+import { Product } from './product.model'
 
 @model()
-export class File extends Entity {
+export class ThreeDFile extends Entity {
+  static statuses = {
+    WAITING_FOR_PROCESSING: 'WAITING_FOR_PROCESSING',
+    PROCESSING: 'PROCESSING',
+  }
+
   @property({
     type: 'number',
     id: true,
@@ -47,10 +52,10 @@ export class File extends Entity {
   })
   amount?: number;
 
-  @hasMany(() => Product, {keyTo: 'materialId'})
+  @hasMany(() => Product, { keyTo: 'materialId' })
   products?: Product[];
 
-  constructor(data?: Partial<File>) {
+  constructor(data?: Partial<ThreeDFile>) {
     super(data);
   }
 }
