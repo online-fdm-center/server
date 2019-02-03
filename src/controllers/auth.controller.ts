@@ -17,7 +17,7 @@ export class AuthController {
     public userRepository: UserRepository,
     @repository('AuthTokenRepository')
     public authTokenRepository: AuthTokenRepository,
-    @inject(AuthenticationBindings.CURRENT_USER) private user: User,
+
   ) { }
 
   @post('/temporaryRegister')
@@ -29,14 +29,14 @@ export class AuthController {
 
   @authenticate('TokenStrategy')
   @post('/register')
-  async register(@requestBody() user: User): Promise<void> {
-    await this.userRepository.updateById(this.user.id, { ...user, id: this.user.id, isTemporary: false });
+  async register(@requestBody() user: User, @inject(AuthenticationBindings.CURRENT_USER) currentuser: User, ): Promise<void> {
+    await this.userRepository.updateById(currentuser.id, { ...user, id: currentuser.id, isTemporary: false });
   }
 
   @authenticate('TokenStrategy')
   @get('/checkAuth')
-  checkAuth(): User {
-    console.log(this.user);
-    return this.user;
+  checkAuth(@inject(AuthenticationBindings.CURRENT_USER) currentuser: User): User {
+    console.log(currentuser);
+    return currentuser;
   }
 }

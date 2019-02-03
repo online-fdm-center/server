@@ -1,9 +1,10 @@
-import {OnlineFdmCenterApplication} from '../..';
+import { OnlineFdmCenterApplication } from '../..';
 import {
   createRestAppClient,
   givenHttpServerConfig,
   Client,
 } from '@loopback/testlab';
+import * as request from 'supertest';
 
 export async function setupApplication(): Promise<AppWithClient> {
   const app = new OnlineFdmCenterApplication({
@@ -15,7 +16,7 @@ export async function setupApplication(): Promise<AppWithClient> {
 
   const client = createRestAppClient(app);
 
-  return {app, client};
+  return { app, client };
 }
 
 export interface AppWithClient {
