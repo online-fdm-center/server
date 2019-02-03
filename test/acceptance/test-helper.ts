@@ -4,7 +4,6 @@ import {
   givenHttpServerConfig,
   Client,
 } from '@loopback/testlab';
-import * as request from 'supertest';
 
 export async function setupApplication(): Promise<AppWithClient> {
   const app = new OnlineFdmCenterApplication({

@@ -1,17 +1,12 @@
-import { Getter } from '@loopback/context';
-import { repository } from '@loopback/repository'
 import { Client, expect } from '@loopback/testlab';
 import { OnlineFdmCenterApplication } from '../..';
 import { setupApplication } from './test-helper';
-import { UserRepository, ProductRepository, AuthTokenRepository } from '../../src/repositories';
-import { DbDataSource } from '../../src/datasources/db.datasource';
+import { UserRepository } from '../../src/repositories';
 
 describe('Auth', () => {
   let app: OnlineFdmCenterApplication;
   let client: Client;
   let userRepository: UserRepository;
-  let productRepository: ProductRepository;
-  let authTokenRepository: AuthTokenRepository;
   before('setupApplication', async () => {
     ({ app, client } = await setupApplication());
     userRepository = await app.getRepository<UserRepository>(UserRepository);

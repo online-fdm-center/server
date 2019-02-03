@@ -36,6 +36,7 @@ export class FileController {
     })
   }
 
+  @authenticate('TokenStrategy')
   @post('/files', {
     responses: {
       '200': {

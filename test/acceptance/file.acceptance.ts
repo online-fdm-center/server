@@ -1,17 +1,17 @@
-import { Getter } from '@loopback/context';
-import { repository } from '@loopback/repository'
+import * as fs from 'fs';
 import { Client, expect } from '@loopback/testlab';
 import { OnlineFdmCenterApplication } from '../..';
 import { setupApplication } from './test-helper';
-import { FileRepository } from '../../src/repositories';
-import { ThreeDFile } from '../../src/models'
-import { DbDataSource } from '../../src/datasources/db.datasource';
+import { FileRepository, } from '../../src/repositories';
+import { ThreeDFile, AuthToken } from '../../src/models'
+import { getAuthToken } from '../helpers/tokenProvider';
 
 describe('File', () => {
   let app: OnlineFdmCenterApplication;
   let client: Client;
   let fileRepository: FileRepository;
   let files: ThreeDFile[];
+  let authToken: AuthToken;
   before('setupApplication', async () => {
     ({ app, client } = await setupApplication());
     fileRepository = await app.getRepository<FileRepository>(FileRepository);
@@ -25,12 +25,36 @@ describe('File', () => {
         status: ThreeDFile.statuses.WAITING_FOR_PROCESSING,
       }
     ]);
+    authToken = await getAuthToken(app);
   });
 
   after(async () => {
     await fileRepository.delete(files[0]);
     await app.stop();
   });
+
+  describe('POST /files', () => {
+    const countFilesInUploadDir = fs.readdirSync('uploads').length;
+    it('should return unauthorized', async () => {
+      await client.post('/files')
+        .attach('file', 'test/laser.stl')
+        .expect(401);
+    })
+    it('should upload file to dir', async () => {
+      await client.post('/files')
+        .set('X-Auth-Token', authToken.token)
+        .attach('file', 'test/laser.stl')
+      const countFilesInUploadDirAfterQuery = fs.readdirSync('uploads').length;
+      expect(countFilesInUploadDirAfterQuery).above(countFilesInUploadDir);
+    })
+    it('should return ThreeDFile', async () => {
+      const res = await client.post('/files')
+        .set('X-Auth-Token', authToken.token)
+        .attach('file', 'test/laser.stl')
+        .expect(200);
+      expect(res.body).keys('id', 'originalName');
+    })
+  })
 
   describe('POST /getFileToProcess', () => {
     let countFilesBeforeQuery: number;
