@@ -23,7 +23,7 @@ export class AuthController {
   @post('/temporaryRegister')
   async temporaryRegister(): Promise<AuthToken> {
     const user = await this.userRepository.create({});
-    const token = await crypto.randomBytes(36).toString('hex');
+    const token = await crypto.randomBytes(24).toString('hex');
     return await this.userRepository.authTokens(user.id).create({ token });
   }
 
