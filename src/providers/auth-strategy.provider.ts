@@ -33,6 +33,8 @@ export class MyAuthStrategyProvider implements Provider<Strategy | undefined> {
       return new LocalStrategy(this.verifyLoginPassword);
     } if (name === 'TokenStrategy') {
       return new CustomStrategy(this.verifyToken.bind(this));
+    } if (name === 'ServerTokenStrategy') {
+      return new CustomStrategy(this.verifyServerToken.bind(this));
     } else {
       return Promise.reject(`The strategy ${name} is not available.`);
     }
@@ -42,7 +44,6 @@ export class MyAuthStrategyProvider implements Provider<Strategy | undefined> {
     req: express.Request,
     cb: (err: Error | null, user?: User | false) => void,
   ) {
-    console.log(req.header('x-auth-token'));
     const token = req.header('x-auth-token');
     if (!token) {
       cb(null, false);
@@ -67,6 +68,18 @@ export class MyAuthStrategyProvider implements Provider<Strategy | undefined> {
       })
       .catch(cb)
 
+  }
+
+  verifyServerToken(
+    req: express.Request,
+    cb: (err: Error | null, result?: boolean) => void,
+  ) {
+    const token = req.header('x-auth-token');
+    if (!token) {
+      cb(null, false);
+      return
+    }
+    cb(null, token === process.env.SERVER_AUTH_TOKEN);
   }
 
   verifyLoginPassword(

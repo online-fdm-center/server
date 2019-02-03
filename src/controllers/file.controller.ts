@@ -11,6 +11,8 @@ import {
   RestBindings
 } from '@loopback/rest';
 import * as multer from 'multer';
+import { get } from 'https';
+import { authenticate } from '@loopback/authentication';
 
 type ExpressFiles = {
   [fieldname: string]: Express.Multer.File[];
@@ -80,5 +82,30 @@ export class FileController {
           })
         }
       })
+  }
+
+  @authenticate('ServerTokenStrategy')
+  @post('/getFileToProcess', {
+    responses: {
+      '200': {
+        description: 'File model instance',
+        content: { 'application/json': { schema: { 'x-ts-type': ThreeDFile } } },
+      },
+    },
+  })
+  async getFileToProcess(): Promise<ThreeDFile | null> {
+    const file = await this.fileRepository.findOne({
+      where: {
+        status: ThreeDFile.statuses.WAITING_FOR_PROCESSING
+      }
+    })
+    if (!file) {
+      return file
+    } else {
+      await this.fileRepository.updateById(file.id, {
+        status: ThreeDFile.statuses.PROCESSING
+      });
+      return file;
+    }
   }
 }

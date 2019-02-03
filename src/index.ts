@@ -1,6 +1,8 @@
 import { OnlineFdmCenterApplication } from './application';
 import { ApplicationConfig } from '@loopback/core';
 
+require('dotenv').config()
+
 export { OnlineFdmCenterApplication };
 
 export async function main(options: ApplicationConfig = {}) {

@@ -23,12 +23,12 @@ export class ThreeDFile extends Entity {
   @property({
     type: 'string',
   })
-  originalName?: string;
+  originalName: string;
 
   @property({
     type: 'number',
   })
-  size?: number;
+  size: number;
 
   @property({
     type: 'string',
