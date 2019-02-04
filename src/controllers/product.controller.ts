@@ -16,15 +16,20 @@ import {
   del,
   requestBody,
 } from '@loopback/rest';
-import { Product } from '../models';
+import { Product, User } from '../models';
 import { ProductRepository } from '../repositories';
+import { authenticate, AuthenticationBindings } from '@loopback/authentication';
+import { inject } from '@loopback/core';
 
 export class ProductController {
   constructor(
     @repository(ProductRepository)
     public productRepository: ProductRepository,
+    @inject(AuthenticationBindings.CURRENT_USER)
+    private currentuser: User,
   ) { }
 
+  @authenticate('TokenStrategy')
   @post('/products', {
     responses: {
       '200': {
@@ -34,9 +39,10 @@ export class ProductController {
     },
   })
   async create(@requestBody() product: Product): Promise<Product> {
-    return await this.productRepository.create(product);
+    return await this.productRepository.create({ ...product, userId: this.currentuser.id });
   }
 
+  @authenticate('TokenStrategy')
   @get('/products/count', {
     responses: {
       '200': {
@@ -51,6 +57,7 @@ export class ProductController {
     return await this.productRepository.count(where);
   }
 
+  @authenticate('TokenStrategy')
   @get('/products', {
     responses: {
       '200': {
@@ -69,6 +76,7 @@ export class ProductController {
     return await this.productRepository.find(filter);
   }
 
+  @authenticate('TokenStrategy')
   @patch('/products', {
     responses: {
       '200': {
@@ -84,6 +92,7 @@ export class ProductController {
     return await this.productRepository.updateAll(product, where);
   }
 
+  @authenticate('TokenStrategy')
   @get('/products/{id}', {
     responses: {
       '200': {
@@ -96,6 +105,7 @@ export class ProductController {
     return await this.productRepository.findById(id);
   }
 
+  @authenticate('TokenStrategy')
   @patch('/products/{id}', {
     responses: {
       '204': {
@@ -110,6 +120,7 @@ export class ProductController {
     await this.productRepository.updateById(id, product);
   }
 
+  @authenticate('TokenStrategy')
   @put('/products/{id}', {
     responses: {
       '204': {
@@ -124,6 +135,7 @@ export class ProductController {
     await this.productRepository.replaceById(id, product);
   }
 
+  @authenticate('TokenStrategy')
   @del('/products/{id}', {
     responses: {
       '204': {

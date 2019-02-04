@@ -9,3 +9,11 @@ export async function getAuthToken(app: OnlineFdmCenterApplication): Promise<Aut
   )
   return await authTokenController.temporaryRegister();
 }
+
+export async function removeAuthTokenAndUser(app: OnlineFdmCenterApplication, token: AuthToken): Promise<void> {
+  let authTokenController = new AuthController(
+    await app.getRepository<UserRepository>(UserRepository),
+    await app.getRepository<AuthTokenRepository>(AuthTokenRepository)
+  )
+  return authTokenController.deleteUser(token.userId);
+}

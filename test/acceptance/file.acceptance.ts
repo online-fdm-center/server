@@ -4,7 +4,7 @@ import { OnlineFdmCenterApplication } from '../..';
 import { setupApplication } from './test-helper';
 import { FileRepository, } from '../../src/repositories';
 import { ThreeDFile, AuthToken } from '../../src/models'
-import { getAuthToken } from '../helpers/tokenProvider';
+import { getAuthToken, removeAuthTokenAndUser } from '../helpers/tokenProvider';
 
 describe('File', () => {
   let app: OnlineFdmCenterApplication;
@@ -29,7 +29,10 @@ describe('File', () => {
   });
 
   after(async () => {
-    await fileRepository.delete(files[0]);
+    await files.forEach(async file => {
+      await fileRepository.delete(file);
+    })
+    await removeAuthTokenAndUser(app, authToken);
     await app.stop();
   });
 
@@ -41,11 +44,12 @@ describe('File', () => {
         .expect(401);
     })
     it('should upload file to dir', async () => {
-      await client.post('/files')
+      const res = await client.post('/files')
         .set('X-Auth-Token', authToken.token)
         .attach('file', 'test/laser.stl')
       const countFilesInUploadDirAfterQuery = fs.readdirSync('uploads').length;
       expect(countFilesInUploadDirAfterQuery).above(countFilesInUploadDir);
+      files.push(new ThreeDFile(res.body));
     })
     it('should return ThreeDFile', async () => {
       const res = await client.post('/files')
@@ -53,6 +57,7 @@ describe('File', () => {
         .attach('file', 'test/laser.stl')
         .expect(200);
       expect(res.body).keys('id', 'originalName');
+      files.push(new ThreeDFile(res.body));
     })
   })
 

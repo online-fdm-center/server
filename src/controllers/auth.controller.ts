@@ -27,6 +27,11 @@ export class AuthController {
     return await this.userRepository.authTokens(user.id).create({ token });
   }
 
+  async deleteUser(id: number): Promise<void> {
+    await this.userRepository.authTokens(id).delete();
+    return this.userRepository.deleteById(id);
+  }
+
   @authenticate('TokenStrategy')
   @post('/register')
   async register(@requestBody() user: User, @inject(AuthenticationBindings.CURRENT_USER) currentuser: User, ): Promise<void> {
