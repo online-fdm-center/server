@@ -11,6 +11,8 @@ pipeline:
 services:
   database:
     image: mysql
+    commands:
+      - mysqld --default-authentication-plugin=mysql_native_password
     environment:
-     - MYSQL_DATABASE=online.fdm.center
-     - MYSQL_ROOT_PASSWORD=123321Aa
+      - MYSQL_DATABASE=online.fdm.center
+      - MYSQL_ROOT_PASSWORD=123321Aa
