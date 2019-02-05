@@ -3,8 +3,8 @@ pipeline:
     image: node:10
     commands:
       - npm install
-      - npm migrate -- --rebuild
-      - npm migrate
+      - npm run migrate -- --rebuild
+      - npm run migrate
       - npm test
 
 services:
