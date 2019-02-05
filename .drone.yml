@@ -1,0 +1,9 @@
+kind: pipeline
+name: online-fdm-center_server
+
+steps:
+- name: server
+  image: node:10
+  commands:
+  - npm install
+  - npm test
