@@ -4,6 +4,7 @@ pipeline:
     commands:
       - npm install
       - npm run build
+      - sleep 10
       - npm run migrate -- --rebuild
       - npm run migrate
       - npm test
