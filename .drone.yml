@@ -8,6 +8,8 @@ pipeline:
       - npm run migrate -- --rebuild
       - npm run migrate
       - npm test
+    environment:
+      -SERVER_AUTH_TOKEN=testServerAuthToken
 
 services:
   database:
