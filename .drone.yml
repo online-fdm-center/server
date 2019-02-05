@@ -7,3 +7,5 @@ steps:
   commands:
   - npm install
   - npm test
+
+branches: [master]
