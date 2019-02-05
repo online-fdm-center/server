@@ -1,5 +1,5 @@
 pipeline:
-  server: server
+  server: backend
     image: node:10
     commands:
     - npm install
