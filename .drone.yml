@@ -10,6 +10,6 @@ pipeline:
 services:
   database:
     image: mysql
-    enviroment:
+    environment:
      - MYSQL_DATABASE=online.fdm.center
      - MYSQL_ROOT_PASSWORD=123321Aa
