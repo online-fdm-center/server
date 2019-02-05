@@ -3,4 +3,13 @@ pipeline:
     image: node:10
     commands:
       - npm install
+      - npm migrate -- --rebuild
+      - npm migrate
       - npm test
+
+services:
+  database:
+    image: mysql
+    enviroment:
+     - MYSQL_DATABASE=online.fdm.center
+     - MYSQL_ROOT_PASSWORD=123321Aa
