@@ -89,4 +89,30 @@ describe('Product', () => {
       products.push(new Product(res.body));
     })
   })
+
+  describe('POST /products/duplicate/{id}', () => {
+    it('should return unauthorized if wrong token', async () => {
+      const res = await client.post(`/products/duplicate/${products[0].id}`)
+        .expect(401);
+    })
+    it('should return new product, equal to old', async () => {
+      const res = await client.post(`/products/duplicate/${products[0].id}`)
+        .set('X-Auth-Token', authToken.token)
+        .expect(200);
+      expect(res.body).keys('id');
+      products.push(new Product(res.body));
+
+      let oldProduct = products[0].toJSON();
+      let newProduct = res.body;
+      expect(new Product(oldProduct).id).not.equal(new Product(newProduct).id);
+      oldProduct = { ...oldProduct, id: null, status: null };
+      newProduct = { ...newProduct, id: null, status: null };
+      expect(oldProduct).deepEqual(newProduct);
+    })
+    it('should return 404 if product not exist', async () => {
+      const res = await client.post(`/products/duplicate/1050`)
+        .set('X-Auth-Token', authToken.token)
+        .expect(404);
+    })
+  })
 });

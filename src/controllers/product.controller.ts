@@ -15,6 +15,8 @@ import {
   put,
   del,
   requestBody,
+  HttpErrors,
+  api
 } from '@loopback/rest';
 import { Product, User } from '../models';
 import { ProductRepository } from '../repositories';
@@ -31,6 +33,7 @@ export class ProductController {
 
   @authenticate('TokenStrategy')
   @post('/products', {
+    description: 'Создать продукт',
     responses: {
       '200': {
         description: 'Product model instance',
@@ -76,6 +79,7 @@ export class ProductController {
     return await this.productRepository.find(filter);
   }
 
+  /*
   @authenticate('TokenStrategy')
   @patch('/products', {
     responses: {
@@ -91,6 +95,7 @@ export class ProductController {
   ): Promise<Count> {
     return await this.productRepository.updateAll(product, where);
   }
+  */
 
   @authenticate('TokenStrategy')
   @get('/products/{id}', {
@@ -117,9 +122,35 @@ export class ProductController {
     @param.path.number('id') id: number,
     @requestBody() product: Product,
   ): Promise<void> {
-    await this.productRepository.updateById(id, product);
+    const dbProduct = await this.productRepository.findById(id);
+    if (product.userId === this.currentuser.id) {
+      await this.productRepository.updateById(id, product);
+    } else {
+      throw new HttpErrors.Forbidden();
+    }
   }
 
+  @authenticate('TokenStrategy')
+  @post('/products/duplicate/{id}', {
+    responses: {
+      '200': {
+        description: 'Duplicate product model instance',
+        content: { 'application/json': { schema: { 'x-ts-type': Product } } },
+      },
+    },
+  })
+  async duplicateProductById(
+    @param.path.number('id') id: number
+  ): Promise<Product> {
+    const product = await this.productRepository.findById(id);
+    if (product) {
+      return this.productRepository.create({ ...product, id: undefined, userId: this.currentuser.id });
+    } else {
+      throw new HttpErrors.NotFound();
+    }
+  }
+
+  /*
   @authenticate('TokenStrategy')
   @put('/products/{id}', {
     responses: {
@@ -134,6 +165,7 @@ export class ProductController {
   ): Promise<void> {
     await this.productRepository.replaceById(id, product);
   }
+  */
 
   @authenticate('TokenStrategy')
   @del('/products/{id}', {
@@ -144,6 +176,11 @@ export class ProductController {
     },
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
-    await this.productRepository.deleteById(id);
+    const product = await this.productRepository.findById(id);
+    if (product.userId === this.currentuser.id) {
+      await this.productRepository.deleteById(id);
+    } else {
+      throw new HttpErrors.Forbidden();
+    }
   }
 }
