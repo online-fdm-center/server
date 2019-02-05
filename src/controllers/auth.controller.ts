@@ -2,14 +2,18 @@
 import { inject } from '@loopback/context';
 import {
   AuthenticationBindings,
-  UserProfile,
   authenticate
 } from '@loopback/authentication'
-import { get, post, requestBody } from '@loopback/rest'
-import { UserRepository, AuthTokenRepository } from '../repositories'
+import { get, post, requestBody, HttpErrors } from '@loopback/rest'
+import { UserRepository, AuthTokenRepository, ProductRepository } from '../repositories'
 import { repository } from '@loopback/repository';
-import { User, AuthToken } from '../models';
-import * as crypto from 'crypto';
+import { User, AuthToken, UserForRegister } from '../models';
+import * as bcrypt from 'bcrypt';
+
+interface MailPass {
+  mail: string,
+  password: string,
+}
 
 export class AuthController {
   constructor(
@@ -17,14 +21,21 @@ export class AuthController {
     public userRepository: UserRepository,
     @repository('AuthTokenRepository')
     public authTokenRepository: AuthTokenRepository,
-
+    @repository('ProductRepository')
+    public productRepository: ProductRepository,
   ) { }
 
-  @post('/temporaryRegister')
+  @post('/temporaryRegister', {
+    description: 'Создание временного пользователя и токена авторизации',
+    responses: {
+      '200': {
+        content: { 'application/json': { schema: { 'x-ts-type': AuthToken } } },
+      },
+    },
+  })
   async temporaryRegister(): Promise<AuthToken> {
     const user = await this.userRepository.create({});
-    const token = await crypto.randomBytes(24).toString('hex');
-    return await this.userRepository.authTokens(user.id).create({ token });
+    return this.authTokenRepository.generateToken(user.id as number);
   }
 
   async deleteUser(id: number): Promise<void> {
@@ -33,15 +44,43 @@ export class AuthController {
   }
 
   @authenticate('TokenStrategy')
-  @post('/register')
-  async register(@requestBody() user: User, @inject(AuthenticationBindings.CURRENT_USER) currentuser: User, ): Promise<void> {
-    await this.userRepository.updateById(currentuser.id, { ...user, id: currentuser.id, isTemporary: false });
+  @post('/register', {
+    description: 'Регистрация пользователя, изменение статуса временного пользователя на постоянного',
+    responses: {
+      '200': {
+        content: { 'application/json': { schema: { 'x-ts-type': User } } },
+      },
+    },
+  })
+  async register(@requestBody() user: UserForRegister, @inject(AuthenticationBindings.CURRENT_USER) currentuser: User, ): Promise<void> {
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+    await this.userRepository.updateById(currentuser.id, { ...user, id: currentuser.id, isTemporary: false, password: hashedPassword });
   }
 
   @authenticate('TokenStrategy')
-  @get('/checkAuth')
-  checkAuth(@inject(AuthenticationBindings.CURRENT_USER) currentuser: User): User {
-    console.log(currentuser);
-    return currentuser;
+  @post('/auth', {
+    description: 'Авторизует пользователя с помощью логина и пароля, переводит все изделия временного пользователя на него, возвращает новый токен',
+    responses: {
+      '200': {
+        content: { 'application/json': { schema: { 'x-ts-type': AuthToken } } },
+      },
+    },
+  })
+  async auth(@requestBody() mailpass: MailPass, @inject(AuthenticationBindings.CURRENT_USER) currentuser: User): Promise<AuthToken> {
+    let dbUser = await this.userRepository.findOne({ where: { mail: mailpass.mail } });
+    if (!dbUser) {
+      throw new HttpErrors.Unauthorized();
+    }
+    const hashEquals = await bcrypt.compare(mailpass.password, dbUser.password as string);
+    if (!hashEquals) {
+      throw new HttpErrors.Unauthorized();
+    }
+    await this.productRepository.updateAll({
+      userId: dbUser.id
+    }, {
+        userId: currentuser.id
+      });
+    await this.deleteUser(currentuser.id as number);
+    return this.authTokenRepository.generateToken(dbUser.id as number);
   }
 }

@@ -16,7 +16,6 @@ import {
   del,
   requestBody,
   HttpErrors,
-  api
 } from '@loopback/rest';
 import { Product, User } from '../models';
 import { ProductRepository } from '../repositories';

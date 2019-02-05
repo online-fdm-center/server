@@ -3,6 +3,7 @@ import { AuthToken, User } from '../models';
 import { DbDataSource } from '../datasources';
 import { inject, Getter } from '@loopback/core';
 import { UserRepository } from './user.repository';
+import * as crypto from 'crypto';
 
 export class AuthTokenRepository extends DefaultCrudRepository<
   AuthToken,
@@ -22,5 +23,12 @@ export class AuthTokenRepository extends DefaultCrudRepository<
       'user',
       userRepositoryGetter,
     );
+  }
+  async generateToken(userId: number): Promise<AuthToken> {
+    const token = await crypto.randomBytes(24).toString('hex');
+    return this.create({
+      token,
+      userId,
+    })
   }
 }

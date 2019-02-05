@@ -3,6 +3,31 @@ import { Product } from './product.model';
 import { AuthToken } from './auth-token.model';
 
 @model()
+export class UserForRegister {
+  @property({
+    type: 'string'
+  })
+  name?: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  mail: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  password: string;
+
+  @property({
+    type: 'string'
+  })
+  address?: string;
+}
+
+@model()
 export class User extends Entity {
   @property({
     type: 'number',
