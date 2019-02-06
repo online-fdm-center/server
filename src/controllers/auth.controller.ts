@@ -7,13 +7,8 @@ import {
 import { get, post, requestBody, HttpErrors } from '@loopback/rest'
 import { UserRepository, AuthTokenRepository, ProductRepository } from '../repositories'
 import { repository } from '@loopback/repository';
-import { User, AuthToken, UserForRegister } from '../models';
+import { User, AuthToken, UserForRegister, MailPass } from '../models';
 import * as bcrypt from 'bcrypt';
-
-interface MailPass {
-  mail: string,
-  password: string,
-}
 
 export class AuthController {
   constructor(

@@ -2,7 +2,7 @@ import { Client, expect } from '@loopback/testlab';
 import { OnlineFdmCenterApplication } from '../..';
 import { setupApplication } from './test-helper';
 import { UserRepository } from '../../src/repositories';
-import { AuthToken, User, UserForRegister } from '../../src/models'
+import { AuthToken, UserForRegister, MailPass } from '../../src/models'
 import { removeAuthTokenAndUser, getAuthToken } from '../helpers/tokenProvider'
 
 describe('Auth', () => {
@@ -71,13 +71,35 @@ describe('Auth', () => {
     })
   })
   describe('POST /auth', () => {
+    const mailPass: MailPass = {
+      mail: 'test@test.ru',
+      password: 'testpassword',
+    }
+    const wrongMailPass: MailPass = {
+      mail: 'test@test.ru',
+      password: 'wrongtestpassword',
+    }
     it('should return 401 without token', async () => {
       await client.post('/auth')
-        .send({
-          mail: 'testlogin',
-          password: 'testpassword'
-        })
+        .send(mailPass)
         .expect(401);
+    })
+    it('should return 401 if wrong password', async () => {
+      await client.post('/auth')
+        .set('X-Auth-Token', authToken.token)
+        .send(wrongMailPass)
+        .expect(401);
+    })
+    it('should return new token', async () => {
+      const res = await client.post('/auth')
+        .set('X-Auth-Token', authToken.token)
+        .send(mailPass)
+        .expect(200);
+      expect(res.body).keys('token', 'userId');
+      authTokens.push(new AuthToken(res.body));
+    })
+    it('old user should be deleted', async () => {
+      await expect(userRepository.findById(authToken.userId)).rejected()
     })
   })
 });

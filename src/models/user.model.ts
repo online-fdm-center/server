@@ -28,6 +28,22 @@ export class UserForRegister {
 }
 
 @model()
+export class MailPass {
+  @property({
+    type: 'string',
+    required: true,
+  })
+  mail: string;
+
+  @property({
+    type: 'string',
+    required: true
+  })
+  password: string;
+}
+
+
+@model()
 export class User extends Entity {
   @property({
     type: 'number',

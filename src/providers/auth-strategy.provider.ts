@@ -3,9 +3,7 @@ import { Strategy } from 'passport';
 import {
   AuthenticationBindings,
   AuthenticationMetadata,
-  UserProfile,
 } from '@loopback/authentication';
-import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as CustomStrategy } from 'passport-custom';
 import { repository } from '@loopback/repository';
 import { UserRepository, AuthTokenRepository } from '../repositories';
@@ -29,9 +27,7 @@ export class MyAuthStrategyProvider implements Provider<Strategy | undefined> {
     }
 
     const name = this.metadata.strategy;
-    if (name === 'LoginPasswordStrategy') {
-      return new LocalStrategy(this.verifyLoginPassword);
-    } if (name === 'TokenStrategy') {
+    if (name === 'TokenStrategy') {
       return new CustomStrategy(this.verifyToken.bind(this));
     } if (name === 'ServerTokenStrategy') {
       return new CustomStrategy(this.verifyServerToken.bind(this));
@@ -79,16 +75,5 @@ export class MyAuthStrategyProvider implements Provider<Strategy | undefined> {
       return
     }
     cb(null, token === process.env.SERVER_AUTH_TOKEN);
-  }
-
-  verifyLoginPassword(
-    username: string,
-    password: string,
-    cb: (err: Error | null, user?: User | false) => void,
-  ) {
-    // find user by name & password
-    // call cb(null, false) when user not found
-    // call cb(null, user) when user is authenticated
-    cb(null, false);
   }
 }
