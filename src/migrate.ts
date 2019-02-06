@@ -1,5 +1,7 @@
 import { OnlineFdmCenterApplication } from './application';
 
+require('dotenv').config()
+
 export async function migrate(args: string[]) {
   const existingSchema = args.includes('--rebuild') ? 'drop' : 'alter';
   console.log('Migrating schemas (%s existing schema)', existingSchema);
