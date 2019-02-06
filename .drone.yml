@@ -9,7 +9,8 @@ pipeline:
       - npm run migrate
       - npm test
     environment:
-      -SERVER_AUTH_TOKEN=testServerAuthToken
+      - SERVER_AUTH_TOKEN=testServerAuthToken
+      - MYSQL_URL=mysql://root:123321Aa@database/online.fdm.center
 
 services:
   database:
