@@ -76,7 +76,7 @@ describe('File', () => {
     it('should return file', async () => {
       const res = await client
         .post('/getFileToProcess')
-        .set('X-Auth-Token', process.env.SERVER_AUTH_TOKEN as string)
+        .set('X-Server-Token', process.env.SERVER_AUTH_TOKEN as string)
         .expect(200);
       expect(res.body).keys('id', 'filename', 'destination');
     });

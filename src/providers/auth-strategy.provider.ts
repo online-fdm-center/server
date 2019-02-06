@@ -29,8 +29,6 @@ export class MyAuthStrategyProvider implements Provider<Strategy | undefined> {
     const name = this.metadata.strategy;
     if (name === 'TokenStrategy') {
       return new CustomStrategy(this.verifyToken.bind(this));
-    } if (name === 'ServerTokenStrategy') {
-      return new CustomStrategy(this.verifyServerToken.bind(this));
     } else {
       return Promise.reject(`The strategy ${name} is not available.`);
     }
@@ -38,42 +36,35 @@ export class MyAuthStrategyProvider implements Provider<Strategy | undefined> {
 
   verifyToken(
     req: express.Request,
-    cb: (err: Error | null, user?: User | false) => void,
+    cb: (err: Error | null, user?: User | boolean) => void,
   ) {
-    const token = req.header('x-auth-token');
-    if (!token) {
+    const usertoken = req.header('x-auth-token');
+    const servertoken = req.header('x-server-token');
+    if (!usertoken && !servertoken) {
       cb(null, false);
       return
     }
-    this.authTokenRepository.findById(token)
-      .then(authToken => {
-        if (!authToken) {
-          cb(null, false);
-        } else {
-          return authToken.userId;
-        }
-      })
-      .then((userId: number) => this.userRepository.findById(userId))
-      .then((user) => {
-        if (!user) {
-          cb(null, false);
-        } else {
-          cb(null, user);
-        }
-      })
-      .catch(cb)
-
-  }
-
-  verifyServerToken(
-    req: express.Request,
-    cb: (err: Error | null, result?: boolean) => void,
-  ) {
-    const token = req.header('x-auth-token');
-    if (!token) {
-      cb(null, false);
-      return
+    if (usertoken) {
+      this.authTokenRepository.findById(usertoken)
+        .then(authToken => {
+          if (!authToken) {
+            cb(null, false);
+          } else {
+            return authToken.userId;
+          }
+        })
+        .then((userId: number) => this.userRepository.findById(userId))
+        .then((user) => {
+          if (!user) {
+            cb(null, false);
+          } else {
+            cb(null, user);
+          }
+        })
+        .catch(cb)
     }
-    cb(null, token === process.env.SERVER_AUTH_TOKEN);
+    if (servertoken) {
+      cb(null, servertoken === process.env.SERVER_AUTH_TOKEN);
+    }
   }
 }

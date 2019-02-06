@@ -30,7 +30,7 @@ export class AuthController {
   })
   async temporaryRegister(): Promise<AuthToken> {
     const user = await this.userRepository.create({});
-    return this.authTokenRepository.generateToken(user.id as number);
+    return this.authTokenRepository.generateToken(user.id);
   }
 
   async deleteUser(id: number): Promise<void> {
@@ -49,7 +49,7 @@ export class AuthController {
   })
   async register(@requestBody() user: UserForRegister, @inject(AuthenticationBindings.CURRENT_USER) currentuser: User, ): Promise<void> {
     const hashedPassword = await bcrypt.hash(user.password, 10);
-    await this.userRepository.updateById(currentuser.id, { ...user, id: currentuser.id, isTemporary: false, password: hashedPassword });
+    await this.userRepository.updateById(currentuser.id, { ...user, id: currentuser.id, group: User.groups.USER, password: hashedPassword });
   }
 
   @authenticate('TokenStrategy')
@@ -66,6 +66,9 @@ export class AuthController {
     if (!dbUser) {
       throw new HttpErrors.Unauthorized();
     }
+    if (dbUser.id === currentuser.id) {
+      throw new HttpErrors.NotAcceptable();
+    }
     const hashEquals = await bcrypt.compare(mailpass.password, dbUser.password as string);
     if (!hashEquals) {
       throw new HttpErrors.Unauthorized();
@@ -75,7 +78,7 @@ export class AuthController {
     }, {
         userId: currentuser.id
       });
-    await this.deleteUser(currentuser.id as number);
-    return this.authTokenRepository.generateToken(dbUser.id as number);
+    await this.deleteUser(currentuser.id);
+    return await this.authTokenRepository.generateToken(dbUser.id);
   }
 }

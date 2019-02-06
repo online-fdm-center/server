@@ -2,7 +2,7 @@ import { Client, expect } from '@loopback/testlab';
 import { OnlineFdmCenterApplication } from '../..';
 import { setupApplication } from './test-helper';
 import { UserRepository } from '../../src/repositories';
-import { AuthToken, UserForRegister, MailPass } from '../../src/models'
+import { AuthToken, UserForRegister, MailPass, User } from '../../src/models'
 import { removeAuthTokenAndUser, getAuthToken } from '../helpers/tokenProvider'
 
 describe('Auth', () => {
@@ -10,11 +10,13 @@ describe('Auth', () => {
   let client: Client;
   let userRepository: UserRepository;
   let authTokens: AuthToken[] = [];
-  let authToken: AuthToken;
+  let authTokenForRegister: AuthToken;
+  let authTokenForAuth: AuthToken;
   before('setupApplication', async () => {
     ({ app, client } = await setupApplication());
     userRepository = await app.getRepository<UserRepository>(UserRepository);
-    authToken = await getAuthToken(app);
+    authTokenForRegister = await getAuthToken(app);
+    authTokenForAuth = await getAuthToken(app);
   });
 
   after(async () => {
@@ -45,7 +47,7 @@ describe('Auth', () => {
       const { userId } = res.body;
       const user = await userRepository.findById(userId);
       expect(user).not.undefined();
-      expect(user.isTemporary).true();
+      expect(user.group).equal(User.groups.TEMPORARY_USER);
     })
   })
   describe('POST /register', () => {
@@ -60,10 +62,10 @@ describe('Auth', () => {
     })
     it('should return update data in database', async () => {
       const res = await client.post('/register')
-        .set('X-Auth-Token', authToken.token)
+        .set('X-Auth-Token', authTokenForRegister.token)
         .send(userForRegister)
         .expect(204);
-      const dbUser = await userRepository.findById(authToken.userId);
+      const dbUser = await userRepository.findById(authTokenForRegister.userId);
       expect(dbUser).not.empty();
       expect(dbUser.mail).equal('test@test.ru');
       expect((dbUser.password as string).length).above(5);
@@ -86,20 +88,20 @@ describe('Auth', () => {
     })
     it('should return 401 if wrong password', async () => {
       await client.post('/auth')
-        .set('X-Auth-Token', authToken.token)
+        .set('X-Auth-Token', authTokenForAuth.token)
         .send(wrongMailPass)
         .expect(401);
     })
     it('should return new token', async () => {
       const res = await client.post('/auth')
-        .set('X-Auth-Token', authToken.token)
+        .set('X-Auth-Token', authTokenForAuth.token)
         .send(mailPass)
         .expect(200);
       expect(res.body).keys('token', 'userId');
       authTokens.push(new AuthToken(res.body));
     })
     it('old user should be deleted', async () => {
-      await expect(userRepository.findById(authToken.userId)).rejected()
+      await expect(userRepository.findById(authTokenForAuth.userId)).rejected()
     })
   })
 });

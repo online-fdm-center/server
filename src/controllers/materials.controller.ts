@@ -18,6 +18,7 @@ import {
 } from '@loopback/rest';
 import { Materials } from '../models';
 import { MaterialsRepository } from '../repositories';
+import acl = require('../providers/acl.provider');
 
 export class MaterialsController {
   constructor(

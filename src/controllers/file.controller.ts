@@ -85,7 +85,7 @@ export class FileController {
       })
   }
 
-  @authenticate('ServerTokenStrategy')
+  @authenticate('TokenStrategy')
   @post('/getFileToProcess', {
     responses: {
       '200': {

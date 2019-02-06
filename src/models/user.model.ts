@@ -45,12 +45,19 @@ export class MailPass {
 
 @model()
 export class User extends Entity {
+  static groups = {
+    TEMPORARY_USER: 'TEMPORARY_USER',
+    USER: 'USER',
+    OPERATOR: 'OPERATOR',
+    SERVER: 'SERVER',
+  }
+
   @property({
     type: 'number',
     id: true,
     generated: true,
   })
-  id?: number;
+  id: number;
 
   @property({
     type: 'string',
@@ -74,15 +81,15 @@ export class User extends Entity {
 
   @property({
     type: 'number',
+    default: 0
   })
-  balance?: number;
+  balance: number = 0;
 
   @property({
-    type: 'boolean',
-    required: true,
-    default: true,
+    type: 'string',
+    default: User.groups.TEMPORARY_USER,
   })
-  isTemporary: boolean;
+  group: string;
 
   @hasMany(() => Product, { keyTo: 'userId' })
   products?: Product[];
