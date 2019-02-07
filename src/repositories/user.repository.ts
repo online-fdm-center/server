@@ -1,11 +1,13 @@
 import { DefaultCrudRepository, juggler, HasManyRepositoryFactory, repository } from '@loopback/repository';
+import { AccessControlCrudRepository } from '../helpers/AccessControlCrudRepository'
 import { User, Product, AuthToken } from '../models';
 import { DbDataSource } from '../datasources';
 import { inject, Getter } from '@loopback/core';
 import { ProductRepository } from './product.repository';
 import { AuthTokenRepository } from './auth-token.repository';
+import ac from '../providers/acl.provider';
 
-export class UserRepository extends DefaultCrudRepository<
+export class UserRepository extends AccessControlCrudRepository<
   User,
   typeof User.prototype.id
   > {
@@ -24,7 +26,7 @@ export class UserRepository extends DefaultCrudRepository<
     @repository.getter('AuthTokenRepository')
     getAuthTokenRepository: Getter<AuthTokenRepository>,
   ) {
-    super(User, dataSource);
+    super(User, dataSource, ac, 'id');
     this.products = this.createHasManyRepositoryFactoryFor(
       'products',
       getProductRepository,

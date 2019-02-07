@@ -50,6 +50,7 @@ export class User extends Entity {
     USER: 'USER',
     OPERATOR: 'OPERATOR',
     SERVER: 'SERVER',
+    ADMIN: 'ADMIN',
   }
 
   @property({

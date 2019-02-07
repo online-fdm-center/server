@@ -42,19 +42,13 @@ describe('Product', () => {
   });
 
   after(async () => {
-    console.log('delete products')
     await products.forEach(async product => {
-      console.log(`delete product ${product.id}`)
       await productsRepository.delete(product);
     })
-    console.log('delete files')
     await files.forEach(async file => {
-      console.log(`delete file ${file.id}`)
       await fileRepository.delete(file);
     });
-    console.log('delete materials')
     await materials.forEach(async material => {
-      console.log(`delete material ${material.id}`)
       await materialsRepository.delete(material);
     });
     await removeAuthTokenAndUser(app, authToken);

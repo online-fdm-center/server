@@ -1,10 +1,12 @@
 import { DefaultCrudRepository, juggler, HasManyRepositoryFactory, repository } from '@loopback/repository';
+import { AccessControlCrudRepository } from '../helpers/AccessControlCrudRepository'
 import { Materials, Product } from '../models';
 import { DbDataSource } from '../datasources';
 import { inject, Getter } from '@loopback/core';
 import { ProductRepository } from './product.repository';
+import ac from '../providers/acl.provider';
 
-export class MaterialsRepository extends DefaultCrudRepository<
+export class MaterialsRepository extends AccessControlCrudRepository<
   Materials,
   typeof Materials.prototype.id
   > {
@@ -17,7 +19,7 @@ export class MaterialsRepository extends DefaultCrudRepository<
     @repository.getter('ProductRepository')
     getProductRepository: Getter<ProductRepository>,
   ) {
-    super(Materials, dataSource);
+    super(Materials, dataSource, ac);
     this.products = this.createHasManyRepositoryFactoryFor(
       'products',
       getProductRepository,
