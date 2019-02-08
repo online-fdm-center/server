@@ -1,27 +1,47 @@
 import { AccessControl } from 'accesscontrol';
-import { User } from '../models';
+import { User, Product, Materials, ThreeDFile } from '../models';
 const ac = new AccessControl();
 
 ac.grant(User.groups.TEMPORARY_USER)
-  .createAny('product')
-  .readOwn('product')
-  .updateOwn('product', ['name', 'description', 'materialId', 'count'])
-  .deleteOwn('product')
+  .createOwn(Product.modelName)
+  .readOwn(Product.modelName)
+  .updateOwn(Product.modelName, ['name', 'description', 'materialId', 'count'])
+  .deleteOwn(Product.modelName)
 
-  .readOwn(User.modelName)
   .createOwn(User.modelName)
-  .updateOwn(User.modelName, ['address'])
+  .readOwn(User.modelName)
+  .updateOwn(User.modelName, ['mail', 'address', 'password'])
   .deleteOwn(User.modelName)
+
+  .createAny(ThreeDFile.modelName)
+  .readAny(ThreeDFile.modelName)
+
+  .readAny(Materials.modelName)
 
 ac.grant(User.groups.USER)
   .extend(User.groups.TEMPORARY_USER)
   .createOwn('productApprove')//Может подтверждать заявку на печать
 
+ac.grant(User.groups.OPERATOR)
+  .extend(User.groups.USER)
+  .createAny(Product.modelName)
+  .readAny(Product.modelName)
+  .updateAny(Product.modelName)
+  .deleteAny(Product.modelName)
+
+  .updateAny(ThreeDFile.modelName)
+  .deleteAny(ThreeDFile.modelName)
+
 ac.grant(User.groups.ADMIN)
-  .readAny(User.modelName)
+  .extend(User.groups.OPERATOR)
   .createAny(User.modelName)
+  .readAny(User.modelName)
   .updateAny(User.modelName)
   .deleteAny(User.modelName)
+
+ac.grant(User.groups.SERVER)
+  .readAny(ThreeDFile.modelName)
+  .updateAny(ThreeDFile.modelName)
 
 ac.grant('guest');
 
