@@ -40,6 +40,7 @@ export class MyAuthStrategyProvider implements Provider<Strategy | undefined> {
   ) {
     const usertoken = req.header('x-auth-token');
     const servertoken = req.header('x-server-token');
+    const admintoken = req.header('x-admin-token');
     if (!usertoken && !servertoken) {
       cb(null, false);
       return
@@ -62,14 +63,19 @@ export class MyAuthStrategyProvider implements Provider<Strategy | undefined> {
           }
         })
         .catch(cb)
-    }
-    if (servertoken) {
+    } else if (servertoken) {
       if (servertoken === process.env.SERVER_AUTH_TOKEN) {
-        cb(null, new User({ group: User.groups.SERVER }));
+        cb(null, new User({ id: 0, group: User.groups.SERVER }));
       } else {
         cb(null, false);
       }
 
+    } else if (admintoken) {
+      if (admintoken === process.env.ADMIN_AUTH_TOKEN) {
+        cb(null, new User({ id: 0, group: User.groups.ADMIN }));
+      } else {
+        cb(null, false);
+      }
     }
   }
 }
