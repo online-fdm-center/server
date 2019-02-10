@@ -1,4 +1,4 @@
-import { DefaultCrudRepository, juggler, BelongsToAccessor, repository } from '@loopback/repository';
+import { DefaultCrudRepository, BelongsToAccessor, repository } from '@loopback/repository';
 import { AuthToken, User } from '../models';
 import { DbDataSource } from '../datasources';
 import { inject, Getter } from '@loopback/core';

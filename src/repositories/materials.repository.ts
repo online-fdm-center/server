@@ -1,4 +1,4 @@
-import { DefaultCrudRepository, juggler, HasManyRepositoryFactory, repository } from '@loopback/repository';
+import { HasManyRepositoryFactory, repository } from '@loopback/repository';
 import { AccessControlCrudRepository } from '../helpers/AccessControlCrudRepository'
 import { Materials, Product } from '../models';
 import { DbDataSource } from '../datasources';

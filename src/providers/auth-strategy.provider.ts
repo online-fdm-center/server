@@ -64,7 +64,12 @@ export class MyAuthStrategyProvider implements Provider<Strategy | undefined> {
         .catch(cb)
     }
     if (servertoken) {
-      cb(null, servertoken === process.env.SERVER_AUTH_TOKEN);
+      if (servertoken === process.env.SERVER_AUTH_TOKEN) {
+        cb(null, new User({ group: User.groups.SERVER }));
+      } else {
+        cb(null, false);
+      }
+
     }
   }
 }

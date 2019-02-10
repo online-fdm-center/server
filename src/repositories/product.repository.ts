@@ -1,10 +1,12 @@
-import { DefaultCrudRepository, juggler, BelongsToAccessor, repository } from '@loopback/repository';
+import { BelongsToAccessor, repository } from '@loopback/repository';
 import { Product, Materials, ThreeDFile, User } from '../models';
 import { DbDataSource } from '../datasources';
 import { inject, Getter } from '@loopback/core';
 import { MaterialsRepository, FileRepository, UserRepository } from '../repositories';
+import { AccessControlCrudRepository } from '../helpers/AccessControlCrudRepository';
+import ac from '../providers/acl.provider'
 
-export class ProductRepository extends DefaultCrudRepository<
+export class ProductRepository extends AccessControlCrudRepository<
   Product,
   typeof Product.prototype.id
   > {
@@ -29,7 +31,7 @@ export class ProductRepository extends DefaultCrudRepository<
     @repository.getter('UserRepository')
     userRepositoryGetter: Getter<UserRepository>,
   ) {
-    super(Product, dataSource);
+    super(Product, dataSource, ac, 'userId');
     this.material = this.createBelongsToAccessorFor(
       'material',
       materialsRepositoryGetter,

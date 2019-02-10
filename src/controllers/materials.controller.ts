@@ -16,9 +16,11 @@ import {
   del,
   requestBody,
 } from '@loopback/rest';
-import { Materials } from '../models';
+import { Materials, User } from '../models';
 import { MaterialsRepository } from '../repositories';
-import acl = require('../providers/acl.provider');
+import ac = require('../providers/acl.provider');
+import { authenticate, AuthenticationBindings } from '@loopback/authentication';
+import { inject } from '@loopback/core';
 
 export class MaterialsController {
   constructor(
@@ -26,6 +28,7 @@ export class MaterialsController {
     public materialsRepository: MaterialsRepository,
   ) { }
 
+  @authenticate('TokenStrategy')
   @post('/materials', {
     responses: {
       '200': {
@@ -34,8 +37,8 @@ export class MaterialsController {
       },
     },
   })
-  async create(@requestBody() materials: Materials): Promise<Materials> {
-    return await this.materialsRepository.create(materials);
+  async create(@requestBody() materials: Materials, @inject(AuthenticationBindings.CURRENT_USER) currentuser: User, ): Promise<Materials> {
+    return await this.materialsRepository.acCreate(materials, { role: currentuser.group, userId: currentuser.id.toString() });
   }
 
   @get('/materials/count', {

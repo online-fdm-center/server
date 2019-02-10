@@ -15,6 +15,7 @@ describe('Product', () => {
   let materials: Materials[];
   let products: Product[];
   let authToken: AuthToken;
+  let authToken2: AuthToken;
   before('setupApplication', async () => {
     ({ app, client } = await setupApplication());
     fileRepository = await app.getRepository<FileRepository>(FileRepository);
@@ -38,20 +39,16 @@ describe('Product', () => {
       }
     ])
     authToken = await getAuthToken(app);
+    authToken2 = await getAuthToken(app);
     products = [];
   });
 
   after(async () => {
-    await products.forEach(async product => {
-      await productsRepository.delete(product);
-    })
-    await files.forEach(async file => {
-      await fileRepository.delete(file);
-    });
-    await materials.forEach(async material => {
-      await materialsRepository.delete(material);
-    });
+    await productsRepository.deleteAll();
+    await fileRepository.deleteAll();
+    await materialsRepository.deleteAll();
     await removeAuthTokenAndUser(app, authToken);
+    await removeAuthTokenAndUser(app, authToken2);
     await app.stop();
   });
 
@@ -107,6 +104,40 @@ describe('Product', () => {
       const res = await client.post(`/products/duplicate/1050`)
         .set('X-Auth-Token', authToken.token)
         .expect(404);
+    })
+  })
+
+  describe('DELETE /products/{id}', () => {
+    let ownProduct: Product;
+    let notOwnProduct: Product;
+    before(async () => {
+      var secondUser =
+        ownProduct = await productsRepository.create(new Product({
+          userId: authToken.userId,
+          fileId: files[0].id,
+          count: 1,
+          description: 'ownProduct',
+          materialId: materials[0].id,
+          name: 'ownProduct',
+        }))
+      notOwnProduct = await productsRepository.create(new Product({
+        userId: authToken2.userId,
+        fileId: files[0].id,
+        count: 1,
+        description: 'notOwnProduct',
+        materialId: materials[0].id,
+        name: 'notOwnProduct',
+      }))
+    })
+    it('should return forbidden if delete not own product', async () => {
+      const res = await client.delete(`/products/${notOwnProduct.id}`)
+        .set('X-Auth-Token', authToken.token)
+        .expect(403);
+    })
+    it('should return success if delete own product', async () => {
+      const res = await client.delete(`/products/${ownProduct.id}`)
+        .set('X-Auth-Token', authToken.token)
+        .expect(204);
     })
   })
 });

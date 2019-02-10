@@ -41,7 +41,10 @@ export class ProductController {
     },
   })
   async create(@requestBody() product: Product): Promise<Product> {
-    return await this.productRepository.create({ ...product, userId: this.currentuser.id });
+    return await this.productRepository.acCreate(
+      { ...product, userId: this.currentuser.id },
+      { role: this.currentuser.group, userId: this.currentuser.id.toString() }
+    );
   }
 
   @authenticate('TokenStrategy')
@@ -106,7 +109,7 @@ export class ProductController {
     },
   })
   async findById(@param.path.number('id') id: number): Promise<Product> {
-    return await this.productRepository.findById(id);
+    return await this.productRepository.acFindById(id, {}, { role: this.currentuser.group, userId: this.currentuser.id.toString() });
   }
 
   @authenticate('TokenStrategy')
@@ -121,12 +124,7 @@ export class ProductController {
     @param.path.number('id') id: number,
     @requestBody() product: Product,
   ): Promise<void> {
-    const dbProduct = await this.productRepository.findById(id);
-    if (product.userId === this.currentuser.id) {
-      await this.productRepository.updateById(id, product);
-    } else {
-      throw new HttpErrors.Forbidden();
-    }
+    await this.productRepository.acFindById(id, {}, { role: this.currentuser.group, userId: this.currentuser.id.toString() });
   }
 
   @authenticate('TokenStrategy')
@@ -175,11 +173,6 @@ export class ProductController {
     },
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
-    const product = await this.productRepository.findById(id);
-    if (product.userId === this.currentuser.id) {
-      await this.productRepository.deleteById(id);
-    } else {
-      throw new HttpErrors.Forbidden();
-    }
+    await this.productRepository.acDeleteById(id, { role: this.currentuser.group, userId: this.currentuser.id.toString() });
   }
 }

@@ -1,4 +1,4 @@
-import { DefaultCrudRepository, juggler, repository, HasManyRepositoryFactory } from '@loopback/repository';
+import { DefaultCrudRepository, repository, HasManyRepositoryFactory } from '@loopback/repository';
 import { ThreeDFile, Product } from '../models';
 import { DbDataSource } from '../datasources';
 import { inject, Getter } from '@loopback/core';
