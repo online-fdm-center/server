@@ -41,7 +41,7 @@ export class MyAuthStrategyProvider implements Provider<Strategy | undefined> {
     const usertoken = req.header('x-auth-token');
     const servertoken = req.header('x-server-token');
     const admintoken = req.header('x-admin-token');
-    if (!usertoken && !servertoken) {
+    if (!usertoken && !servertoken && !admintoken) {
       cb(null, false);
       return
     }

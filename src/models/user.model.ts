@@ -102,3 +102,12 @@ export class User extends Entity {
     super(data);
   }
 }
+
+@model()
+export class UserForRegisterByAdmin extends UserForRegister {
+  @property({
+    type: 'string',
+    default: User.groups.TEMPORARY_USER,
+  })
+  group: string;
+}

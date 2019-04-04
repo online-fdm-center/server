@@ -17,6 +17,13 @@ export class AccessControlCrudRepository<T extends Entity, ID> extends DefaultCr
     super(entityClass, dataSource);
   }
 
+  /**
+   * Создает сущность в базе данных с учетом контроля доступа
+   * @param entity сущность, которую надо создать
+   * @param options параметры
+   * @param options.role группа пользователя, который создает сущность
+   * @param options.userId id пользователя, который создает сущность
+   */
   async acCreate(entity: DataObject<T>, options: AcOptions): Promise<T> {
     const permissionCreateAny = this.ac.can(options.role).createAny(this.entityClass.modelName);
     if (permissionCreateAny.granted) {
@@ -33,6 +40,33 @@ export class AccessControlCrudRepository<T extends Entity, ID> extends DefaultCr
       }
     }
     throw new HttpErrors.Forbidden('Not allowed to create entity');
+  }
+
+  /**
+   * Ищет сущности в базе данных с учетом контроля доступа
+   * @param filter фильтр сущностей
+   * @param options параметры
+   * @param options.role группа пользователя, который ищет сущности
+   * @param options.userId id пользователя, который ищет сущности
+   */
+  async acFind(filter: Filter<T>, options: AcOptions): Promise<T[]> {
+    const permissionReadAny = this.ac.can(options.role).readAny(this.entityClass.modelName);
+    if (permissionReadAny.granted) {
+      return super.find(filter, options);
+    }
+    const permissionReadOwn = this.ac.can(options.role).readOwn(this.entityClass.modelName);
+    if (permissionReadOwn.granted && this.userField && options.userId) {
+      filter = {
+        ...filter,
+        where: {
+          ...filter.where,
+          [this.userField]: options.userId
+        }
+      };
+      console.log(filter);
+      return super.find(filter, options);
+    }
+    throw new HttpErrors.Forbidden();
   }
 
   async acFindById(id: ID, filter: Filter<T>, options: AcOptions): Promise<T> {
