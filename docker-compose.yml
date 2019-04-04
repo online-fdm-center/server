@@ -5,6 +5,8 @@ services:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
+    volumes:
+      - /opt/fdm_mysqldata:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: online.fdm.center
