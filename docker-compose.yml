@@ -1,0 +1,28 @@
+version: '3.1'
+services:
+
+  onlinefdmdb:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: online.fdm.center
+      MYSQL_USER: fdmuser
+      MYSQL_PASSWORD: ${DB_USER_PASSWORD}
+
+  onlinefdmbackend:
+    image: node:10
+    command: bash start.sh
+    ports:
+      - 3000:3000
+    links:
+      - onlinefdmdb
+    volumes:
+      - ./:/app
+    working_dir: /app
+    environment:
+      SERVER_AUTH_TOKEN: alUwi44C0i4qimidata3zEL4
+      ADMIN_AUTH_TOKEN: viCAkEde948872suy1uzaqa7
+      MYSQL_URL: mysql://fdmuser:${DB_USER_PASSWORD}@onlinefdmdb/online.fdm.center
+
