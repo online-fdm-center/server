@@ -26,8 +26,8 @@ services:
       - ./:/app
     working_dir: /app
     environment:
-      SERVER_AUTH_TOKEN: alUwi44C0i4qimidata3zEL4
-      ADMIN_AUTH_TOKEN: viCAkEde948872suy1uzaqa7
+      SERVER_AUTH_TOKEN: ${SERVER_AUTH_TOKEN}
+      ADMIN_AUTH_TOKEN: ${ADMIN_AUTH_TOKEN}
       MYSQL_URL: mysql://fdmuser:${DB_USER_PASSWORD}@db/online.fdm.center
 
   softmigration:
