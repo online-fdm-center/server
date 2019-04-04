@@ -1,0 +1,16 @@
+
+version: '3.1'
+services:
+
+  onlinefdmmigrate:
+    image: node:10
+    command: yarn migrate -- --rebuild
+    links:
+      - db
+    volumes:
+      - ./:/app
+    working_dir: /app
+    environment:
+      SERVER_AUTH_TOKEN: alUwi44C0i4qimidata3zEL4
+      ADMIN_AUTH_TOKEN: viCAkEde948872suy1uzaqa7
+      MYSQL_URL: mysql://fdmuser:${DB_USER_PASSWORD}@db/online.fdm.center
