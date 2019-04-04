@@ -13,7 +13,7 @@ services:
 
   onlinefdmbackend:
     image: node:10
-    command: bash start.sh
+    command: yarn start
     ports:
       - 3000:3000
     links:
