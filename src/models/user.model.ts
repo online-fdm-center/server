@@ -84,7 +84,7 @@ export class User extends Entity {
     type: 'number',
     default: 0
   })
-  balance: number = 0;
+  balance: number;
 
   @property({
     type: 'string',
