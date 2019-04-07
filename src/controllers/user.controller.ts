@@ -20,6 +20,7 @@ import { User, UserForRegisterByAdmin } from '../models';
 import { UserRepository } from '../repositories';
 import { inject } from '@loopback/core';
 import { AuthenticationBindings, authenticate } from '@loopback/authentication';
+import * as bcrypt from 'bcrypt';
 
 export class UserController {
   constructor(
@@ -39,10 +40,13 @@ export class UserController {
     },
   })
   async create(@requestBody() user: UserForRegisterByAdmin): Promise<User> {
-    return await this.userRepository.acCreate(user, {
-      role: this.currentuser.group,
-      userId: this.currentuser.id.toString()
-    });
+    return await this.userRepository.acCreate({
+      ...user,
+      password: await bcrypt.hash(user.password, 10)
+    }, {
+        role: this.currentuser.group,
+        userId: this.currentuser.id.toString()
+      });
   }
 
   @get('/users/count', {
