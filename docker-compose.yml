@@ -7,8 +7,11 @@ services:
     restart: always
     volumes:
       - /opt/fdm_mysqldata:/var/lib/mysql
+    ports:
+      - 3306:3306
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: 123321Aa
       MYSQL_DATABASE: online.fdm.center
       MYSQL_USER: fdmuser
       MYSQL_PASSWORD: ${DB_USER_PASSWORD}
@@ -42,4 +45,3 @@ services:
     working_dir: /app
     environment:
       MYSQL_URL: mysql://fdmuser:${DB_USER_PASSWORD}@db/online.fdm.center
-
