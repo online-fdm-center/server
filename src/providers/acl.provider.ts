@@ -32,6 +32,10 @@ ac.grant(User.groups.OPERATOR)
   .updateAny(ThreeDFile.modelName)
   .deleteAny(ThreeDFile.modelName)
 
+  .createAny(Materials.modelName)
+  .updateAny(Materials.modelName)
+  .deleteAny(Materials.modelName)
+
 ac.grant(User.groups.ADMIN)
   .extend(User.groups.OPERATOR)
   .createAny(User.modelName)
