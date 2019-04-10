@@ -8,7 +8,7 @@ services:
     volumes:
       - /opt/fdm_mysqldata:/var/lib/mysql
     ports:
-      - 3306:3306
+      - 33060:3306
     environment:
       MYSQL_ROOT_HOST: '%'
       MYSQL_ROOT_PASSWORD: 123321Aa
@@ -17,8 +17,7 @@ services:
       MYSQL_PASSWORD: ${DB_USER_PASSWORD}
 
   backend:
-    image: node:10
-    command: yarn start
+    image: home.4it.me:5000/ofc-server:latest
     ports:
       - 3000:3000
     links:
