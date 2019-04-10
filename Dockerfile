@@ -1,6 +1,8 @@
 FROM node:10
 WORKDIR /app
-COPY . /app
-RUN yarn install
+COPY package.json .
+RUN yarn install --prod
 EXPOSE 3000
+COPY index.js .
+COPY dist ./dist
 ENTRYPOINT [ "yarn", "start" ]
