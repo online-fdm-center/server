@@ -38,6 +38,24 @@ export class OnlineFdmCenterApplication extends BootMixin(
     });
     this.component(RestExplorerComponent);
 
+    this.api({
+      openapi: '3.0.0',
+      info: {
+        title: process.env.REST_APPLICATION_NAME || 'online.fdm.center api server',
+        version: process.env.REST_APPLICATION_NAME || '1.0.0',
+      },
+      paths: {},
+      components: {
+        securitySchemes: {
+          authToken: {
+            type: 'apiKey',
+            name: 'x-auth-token',
+            in: 'header'
+          }
+        }
+      }
+    })
+
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here
     this.bootOptions = {

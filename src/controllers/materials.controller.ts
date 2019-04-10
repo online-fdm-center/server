@@ -26,6 +26,8 @@ export class MaterialsController {
   constructor(
     @repository(MaterialsRepository)
     public materialsRepository: MaterialsRepository,
+    @inject(AuthenticationBindings.CURRENT_USER)
+    private currentuser: User,
   ) { }
 
   @authenticate('TokenStrategy')
@@ -34,13 +36,15 @@ export class MaterialsController {
       '200': {
         description: 'Materials model instance',
         content: { 'application/json': { schema: { 'x-ts-type': Materials } } },
-      },
+      }
     },
+    security: [{ authToken: [] }],
   })
-  async create(@requestBody() materials: Materials, @inject(AuthenticationBindings.CURRENT_USER) currentuser: User, ): Promise<Materials> {
-    return await this.materialsRepository.acCreate(materials, { role: currentuser.group, userId: currentuser.id.toString() });
+  async create(@requestBody() materials: Materials): Promise<Materials> {
+    return await this.materialsRepository.acCreate(materials, { role: this.currentuser.group, userId: this.currentuser.id.toString() });
   }
 
+  /*
   @get('/materials/count', {
     responses: {
       '200': {
@@ -54,7 +58,9 @@ export class MaterialsController {
   ): Promise<Count> {
     return await this.materialsRepository.count(where);
   }
+  */
 
+  @authenticate('TokenStrategy')
   @get('/materials', {
     responses: {
       '200': {
@@ -66,13 +72,18 @@ export class MaterialsController {
         },
       },
     },
+    security: [{ authToken: [] }],
   })
   async find(
     @param.query.object('filter', getFilterSchemaFor(Materials)) filter?: Filter,
   ): Promise<Materials[]> {
-    return await this.materialsRepository.find(filter);
+    return await this.materialsRepository.acFind(filter || {}, {
+      role: this.currentuser.group,
+      userId: this.currentuser.id.toString()
+    });
   }
 
+  /*
   @patch('/materials', {
     responses: {
       '200': {
@@ -87,7 +98,9 @@ export class MaterialsController {
   ): Promise<Count> {
     return await this.materialsRepository.updateAll(materials, where);
   }
+  */
 
+  @authenticate('TokenStrategy')
   @get('/materials/{id}', {
     responses: {
       '200': {
@@ -95,25 +108,35 @@ export class MaterialsController {
         content: { 'application/json': { schema: { 'x-ts-type': Materials } } },
       },
     },
+    security: [{ authToken: [] }],
   })
   async findById(@param.path.number('id') id: number): Promise<Materials> {
-    return await this.materialsRepository.findById(id);
+    return await this.materialsRepository.acFindById(id, {}, {
+      role: this.currentuser.group,
+      userId: this.currentuser.id.toString()
+    });
   }
 
+  @authenticate('TokenStrategy')
   @patch('/materials/{id}', {
     responses: {
       '204': {
         description: 'Materials PATCH success',
       },
     },
+    security: [{ authToken: [] }],
   })
   async updateById(
     @param.path.number('id') id: number,
     @requestBody() materials: Materials,
   ): Promise<void> {
-    await this.materialsRepository.updateById(id, materials);
+    await this.materialsRepository.acUpdateById(id, materials, {
+      role: this.currentuser.group,
+      userId: this.currentuser.id.toString()
+    });
   }
 
+  /*
   @put('/materials/{id}', {
     responses: {
       '204': {
@@ -127,15 +150,21 @@ export class MaterialsController {
   ): Promise<void> {
     await this.materialsRepository.replaceById(id, materials);
   }
+  */
 
+  @authenticate('TokenStrategy')
   @del('/materials/{id}', {
     responses: {
       '204': {
         description: 'Materials DELETE success',
       },
     },
+    security: [{ authToken: [] }],
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
-    await this.materialsRepository.deleteById(id);
+    await this.materialsRepository.acDeleteById(id, {
+      role: this.currentuser.group,
+      userId: this.currentuser.id.toString()
+    });
   }
 }
