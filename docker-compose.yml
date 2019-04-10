@@ -17,6 +17,7 @@ services:
       MYSQL_PASSWORD: ${DB_USER_PASSWORD}
 
   backend:
+    build: ./
     image: home.4it.me:5000/ofc-server:latest
     ports:
       - 3000:3000
