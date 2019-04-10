@@ -19,30 +19,25 @@ services:
   backend:
     build: ./
     image: home.4it.me:5000/ofc-server:latest
-    command: yarn start
+    command: node .
     ports:
       - 3000:3000
     links:
       - db
     depends_on:
       - softmigration
-    volumes:
-      - ./:/app
-    working_dir: /app
     environment:
+      HOST: 0.0.0.0
       SERVER_AUTH_TOKEN: ${SERVER_AUTH_TOKEN}
       ADMIN_AUTH_TOKEN: ${ADMIN_AUTH_TOKEN}
       MYSQL_URL: mysql://fdmuser:${DB_USER_PASSWORD}@db/online.fdm.center
 
   softmigration:
-    image: node:10
+    image: home.4it.me:5000/ofc-server:latest
     command: yarn migrate
     links:
       - db
     depends_on:
       - db
-    volumes:
-      - ./:/app
-    working_dir: /app
     environment:
       MYSQL_URL: mysql://fdmuser:${DB_USER_PASSWORD}@db/online.fdm.center

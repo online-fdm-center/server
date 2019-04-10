@@ -3,12 +3,9 @@ version: '3.1'
 services:
 
   onlinefdmmigrate:
-    image: node:10
+    image: home.4it.me:5000/ofc-server:latest
     command: yarn migrate -- --rebuild
     links:
       - db
-    volumes:
-      - ./:/app
-    working_dir: /app
     environment:
       MYSQL_URL: mysql://fdmuser:${DB_USER_PASSWORD}@db/online.fdm.center
