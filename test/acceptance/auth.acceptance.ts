@@ -2,7 +2,7 @@ import { Client, expect } from '@loopback/testlab';
 import { OnlineFdmCenterApplication } from '../..';
 import { setupApplication } from './test-helper';
 import { UserRepository } from '../../src/repositories';
-import { AuthToken, UserForRegister, MailPass, User } from '../../src/models'
+import { AuthToken, UserForRegister, MailPass, UserGroups } from '../../src/models'
 import { removeAuthTokenAndUser, getAuthToken } from '../helpers/tokenProvider'
 
 describe('Auth', () => {
@@ -47,12 +47,12 @@ describe('Auth', () => {
       const { userId } = res.body;
       const user = await userRepository.findById(userId);
       expect(user).not.undefined();
-      expect(user.group).equal(User.groups.TEMPORARY_USER);
+      expect(user.group).equal(UserGroups.TEMPORARY_USER);
     })
   })
   describe('POST /register', () => {
     const userForRegister: UserForRegister = {
-      mail: 'test@test.ru',
+      mail: `${Math.random().toString()}@test.ru`,
       password: 'testpassword',
     }
     it('should return 401 without token', async () => {
@@ -67,18 +67,18 @@ describe('Auth', () => {
         .expect(204);
       const dbUser = await userRepository.findById(authTokenForRegister.userId);
       expect(dbUser).not.empty();
-      expect(dbUser.mail).equal('test@test.ru');
+      expect(dbUser.mail).equal(userForRegister.mail);
       expect((dbUser.password as string).length).above(5);
       expect(dbUser.password).not.equal('testpassword');
     })
   })
   describe('POST /auth', () => {
     const mailPass: MailPass = {
-      mail: 'test@test.ru',
+      mail: `${Math.random().toString()}@test.ru`,
       password: 'testpassword',
     }
     const wrongMailPass: MailPass = {
-      mail: 'test@test.ru',
+      mail: mailPass.mail,
       password: 'wrongtestpassword',
     }
     it('should return 401 without token', async () => {

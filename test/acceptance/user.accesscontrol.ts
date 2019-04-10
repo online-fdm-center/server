@@ -24,8 +24,8 @@ describe('User Access Control', () => {
   describe('acFindById', () => {
     before(async () => {
       users = await userRepository.createAll([
-        new User({}),
-        new User({}),
+        new User({ mail: `${Math.random().toString()}@test.ru` }),
+        new User({ mail: `${Math.random().toString()}@test.ru` }),
       ]);
     })
     it('admin can read all users', async () => {
@@ -56,33 +56,33 @@ describe('User Access Control', () => {
   describe('acCreate', () => {
     it('admin create all users not forbidden', async () => {
       await expect(
-        userRepository.acCreate(new User({ id: 1 }), { role: User.groups.ADMIN, userId: '1' })
+        userRepository.acCreate(new User({ id: 1, mail: `${Math.random().toString()}@test.ru` }), { role: User.groups.ADMIN, userId: '1' })
       ).rejectedWith(ValidationError);//But rejected because cant set ID
 
       await expect(
-        userRepository.acCreate(new User({ id: 2 }), { role: User.groups.ADMIN, userId: '1' })
+        userRepository.acCreate(new User({ id: 2, mail: `${Math.random().toString()}@test.ru` }), { role: User.groups.ADMIN, userId: '1' })
       ).rejectedWith(ValidationError);
     })
     it('user create own user not forbidden', async () => {
       await expect(
-        userRepository.acCreate(new User({ id: 1 }), { role: User.groups.USER, userId: '1' })
+        userRepository.acCreate(new User({ id: 1, mail: `${Math.random().toString()}@test.ru` }), { role: User.groups.USER, userId: '1' })
       ).rejectedWith(ValidationError);
     })
     it('user create other user forbidden', async () => {
       await expect(
-        userRepository.acCreate(new User({ id: 2 }), { role: User.groups.USER, userId: '1' })
+        userRepository.acCreate(new User({ id: 2, mail: `${Math.random().toString()}@test.ru` }), { role: User.groups.USER, userId: '1' })
       ).rejectedWith(HttpErrors.Forbidden);
     })
     it('guest cant create user', async () => {
       await expect(
-        userRepository.acCreate(new User({ id: 1 }), { role: 'guest', userId: '1' })
+        userRepository.acCreate(new User({ id: 1, mail: `${Math.random().toString()}@test.ru` }), { role: 'guest', userId: '1' })
       ).rejectedWith(HttpErrors.Forbidden);
     })
   })
 
   describe('acUpdateById', () => {
     before(async () => {
-      users.push(await userRepository.create(new User()))
+      users.push(await userRepository.create(new User({ mail: `${Math.random().toString()}@test.ru` })))
     })
     it('admin can update all users', async () => {
       await expect(
@@ -130,7 +130,12 @@ describe('User Access Control', () => {
   describe('acDelete', () => {
     let userToDelete: User[] = []
     before(async () => {
-      userToDelete.push(...(await userRepository.createAll([new User(), new User(), new User(), new User()])))
+      userToDelete.push(...(await userRepository.createAll([
+        new User({ mail: `${Math.random().toString()}@test.ru` }),
+        new User({ mail: `${Math.random().toString()}@test.ru` }),
+        new User({ mail: `${Math.random().toString()}@test.ru` }),
+        new User({ mail: `${Math.random().toString()}@test.ru` })
+      ])))
     })
     it('admin delete all users not forbidden', async () => {
       await expect(

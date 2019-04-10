@@ -3,31 +3,6 @@ import { Product } from './product.model';
 import { AuthToken } from './auth-token.model';
 
 @model()
-export class UserForRegister {
-  @property({
-    type: 'string'
-  })
-  name?: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  mail: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  password: string;
-
-  @property({
-    type: 'string'
-  })
-  address?: string;
-}
-
-@model()
 export class MailPass {
   @property({
     type: 'string',
@@ -42,16 +17,39 @@ export class MailPass {
   password: string;
 }
 
-
 @model()
-export class User extends Entity {
-  static groups = {
-    TEMPORARY_USER: 'TEMPORARY_USER',
-    USER: 'USER',
-    OPERATOR: 'OPERATOR',
-    SERVER: 'SERVER',
-    ADMIN: 'ADMIN',
+export class UserForRegister extends MailPass {
+  @property({
+    type: 'string'
+  })
+  name?: string;
+
+  @property({
+    type: 'string'
+  })
+  address?: string;
+}
+
+export enum UserGroups {
+  TEMPORARY_USER = 'TEMPORARY_USER',
+  USER = 'USER',
+  OPERATOR = 'OPERATOR',
+  SERVER = 'SERVER',
+  ADMIN = 'ADMIN',
+}
+
+@model({
+  settings: {
+    indexes: {
+      UNIQUE_INDEX: {
+        "columns": "mail",
+        "kind": "unique"
+      }
+    }
   }
+})
+export class User extends Entity {
+  static groups = UserGroups
 
   @property({
     type: 'number',
@@ -88,9 +86,9 @@ export class User extends Entity {
 
   @property({
     type: 'string',
-    default: User.groups.TEMPORARY_USER,
+    default: UserGroups.TEMPORARY_USER,
   })
-  group: string;
+  group: UserGroups;
 
   @hasMany(() => Product, { keyTo: 'userId' })
   products?: Product[];
@@ -109,5 +107,5 @@ export class UserForRegisterByAdmin extends UserForRegister {
     type: 'string',
     default: User.groups.TEMPORARY_USER,
   })
-  group: string;
+  group: UserGroups;
 }
