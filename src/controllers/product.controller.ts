@@ -124,7 +124,7 @@ export class ProductController {
     @param.path.number('id') id: number,
     @requestBody() product: Product,
   ): Promise<void> {
-    await this.productRepository.acFindById(id, {}, { role: this.currentuser.group, userId: this.currentuser.id.toString() });
+    await this.productRepository.acUpdateById(id, product, { role: this.currentuser.group, userId: this.currentuser.id.toString() });
   }
 
   @authenticate('TokenStrategy')
