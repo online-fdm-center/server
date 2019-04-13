@@ -4,6 +4,8 @@ import {
   Filter,
   repository,
   Where,
+  model,
+  property,
 } from '@loopback/repository';
 import {
   post,
@@ -21,6 +23,14 @@ import { Product, User } from '../models';
 import { ProductRepository } from '../repositories';
 import { authenticate, AuthenticationBindings } from '@loopback/authentication';
 import { inject } from '@loopback/core';
+
+@model()
+class PreliminaryPrice {
+  @property({
+    type: 'number'
+  })
+  preliminaryPrice: number | null
+}
 
 export class ProductController {
   constructor(
@@ -174,5 +184,25 @@ export class ProductController {
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.productRepository.acDeleteById(id, { role: this.currentuser.group, userId: this.currentuser.id.toString() });
+  }
+
+
+  @authenticate('TokenStrategy')
+  @get('/products/{id}/getPreliminaryPrice', {
+    responses: {
+      '200': {
+        description: 'Предварительная цена изделия',
+        content: { 'application/json': { schema: { 'x-ts-type': PreliminaryPrice } } },
+      },
+    },
+  })
+  async getPreliminaryPrice(@param.path.number('id') id: number): Promise<PreliminaryPrice> {
+    //const product = await this.productRepository.acFindById(id, {}, { role: this.currentuser.group, userId: this.currentuser.id.toString() });
+    const file = await this.productRepository.file(id)
+    if (file.status === 'PROCESSED' && file.amount) {
+      return { preliminaryPrice: Math.max(file.amount * 1.05 * 15) }
+    } else {
+      return { preliminaryPrice: null }
+    }
   }
 }
