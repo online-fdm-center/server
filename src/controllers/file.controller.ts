@@ -8,7 +8,9 @@ import {
   requestBody,
   Request,
   Response,
-  RestBindings
+  RestBindings,
+  patch,
+  param
 } from '@loopback/rest';
 import * as multer from 'multer';
 import { get } from 'https';
@@ -108,5 +110,21 @@ export class FileController {
       });
       return file;
     }
+  }
+
+  @authenticate('TokenStrategy')
+  @post('/files/{id}/setAmount', {
+    responses: {
+      '204': {
+        description: 'Объем модели сохранен',
+      },
+    },
+    security: [{ authToken: [] }],
+  })
+  async updateById(
+    @param.path.number('id') id: number,
+    @requestBody() data: { amount: number },
+  ): Promise<void> {
+    await this.fileRepository.updateById(id, { ...data, status: 'PROCESSED' })
   }
 }

@@ -49,6 +49,9 @@ export class ThreeDFile extends Entity {
 
   @property({
     type: 'number',
+    dataType: 'decimal',
+    precision: 10,
+    scale: 2
   })
   amount?: number;
 
