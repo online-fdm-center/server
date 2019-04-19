@@ -3,7 +3,7 @@ import { Options } from 'loopback-datasource-juggler';
 import { AccessControl } from 'accesscontrol'
 import { HttpErrors } from '@loopback/rest';
 
-type AcOptions = Options & {
+export type AcOptions = Options & {
   role: string,
   userId?: string
 }

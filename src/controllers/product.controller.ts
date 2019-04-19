@@ -23,6 +23,7 @@ import { Product, User } from '../models';
 import { ProductRepository } from '../repositories';
 import { authenticate, AuthenticationBindings } from '@loopback/authentication';
 import { inject } from '@loopback/core';
+import { AcOptions } from '../helpers/AccessControlCrudRepository'
 
 @model()
 class PreliminaryPrice {
@@ -33,12 +34,20 @@ class PreliminaryPrice {
 }
 
 export class ProductController {
+
+  acOptions: AcOptions
+
   constructor(
     @repository(ProductRepository)
     public productRepository: ProductRepository,
     @inject(AuthenticationBindings.CURRENT_USER)
     private currentuser: User,
-  ) { }
+  ) {
+    this.acOptions = {
+      role: currentuser.group,
+      userId: currentuser.id.toString()
+    }
+  }
 
   @authenticate('TokenStrategy')
   @post('/products', {
@@ -53,7 +62,7 @@ export class ProductController {
   async create(@requestBody() product: Product): Promise<Product> {
     return await this.productRepository.acCreate(
       { ...product, userId: this.currentuser.id },
-      { role: this.currentuser.group, userId: this.currentuser.id.toString() }
+      this.acOptions
     );
   }
 
@@ -91,7 +100,7 @@ export class ProductController {
   async find(
     @param.query.object('filter', getFilterSchemaFor(Product)) filter?: Filter,
   ): Promise<Product[]> {
-    return await this.productRepository.find(filter);
+    return await this.productRepository.acFind(filter || {}, this.acOptions);
   }
 
   /*
@@ -123,7 +132,7 @@ export class ProductController {
     },
   })
   async findById(@param.path.number('id') id: number): Promise<Product> {
-    return await this.productRepository.acFindById(id, {}, { role: this.currentuser.group, userId: this.currentuser.id.toString() });
+    return await this.productRepository.acFindById(id, {}, this.acOptions);
   }
 
   @authenticate('TokenStrategy')
@@ -139,7 +148,7 @@ export class ProductController {
     @param.path.number('id') id: number,
     @requestBody() product: Product,
   ): Promise<void> {
-    await this.productRepository.acUpdateById(id, product, { role: this.currentuser.group, userId: this.currentuser.id.toString() });
+    await this.productRepository.acUpdateById(id, product, this.acOptions);
   }
 
   @authenticate('TokenStrategy')
@@ -155,7 +164,7 @@ export class ProductController {
   async duplicateProductById(
     @param.path.number('id') id: number
   ): Promise<Product> {
-    const product = await this.productRepository.findById(id);
+    const product = await this.productRepository.acFindById(id, {}, this.acOptions);
     if (product) {
       return this.productRepository.create({ ...product, id: undefined, userId: this.currentuser.id });
     } else {
@@ -190,7 +199,7 @@ export class ProductController {
     },
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
-    await this.productRepository.acDeleteById(id, { role: this.currentuser.group, userId: this.currentuser.id.toString() });
+    await this.productRepository.acDeleteById(id, this.acOptions);
   }
 
 
