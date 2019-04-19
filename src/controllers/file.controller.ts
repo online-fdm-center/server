@@ -20,6 +20,10 @@ type ExpressFiles = {
   [fieldname: string]: Express.Multer.File[];
 } | Express.Multer.File[];
 
+type ThreeDFileAmount = {
+  amount: number
+}
+
 export class FileController {
 
   storage: multer.StorageEngine;
@@ -40,6 +44,7 @@ export class FileController {
 
   @authenticate('TokenStrategy')
   @post('/files', {
+    description: 'Загрузить файл на сервер',
     responses: {
       '200': {
         description: 'File model instance',
@@ -89,6 +94,7 @@ export class FileController {
 
   @authenticate('TokenStrategy')
   @post('/getFileToProcess', {
+    description: 'Получить файл для обработки слайсером. После получения статус файла устанавливается в *PROCESSING*',
     responses: {
       '200': {
         description: 'File model instance',
@@ -114,6 +120,7 @@ export class FileController {
 
   @authenticate('TokenStrategy')
   @post('/files/{id}/setAmount', {
+    description: 'Устанавливает объем модели в 3d файле.',
     responses: {
       '204': {
         description: 'Объем модели сохранен',
@@ -123,7 +130,7 @@ export class FileController {
   })
   async updateById(
     @param.path.number('id') id: number,
-    @requestBody() data: { amount: number },
+    @requestBody() data: ThreeDFileAmount,
   ): Promise<void> {
     await this.fileRepository.updateById(id, { ...data, status: 'PROCESSED' })
   }

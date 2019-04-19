@@ -42,9 +42,16 @@ export class OnlineFdmCenterApplication extends BootMixin(
       openapi: '3.0.0',
       info: {
         title: process.env.REST_APPLICATION_NAME || 'online.fdm.center api server',
+        description: 'Описание API для работы с сервисом онлайн заказа 3d печати',
         version: process.env.REST_APPLICATION_NAME || '1.0.0',
       },
       paths: {},
+      tags: [
+        {
+          name: 'AuthController',
+          description: 'Контроллер авторизации'
+        }
+      ],
       components: {
         securitySchemes: {
           authToken: {

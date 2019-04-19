@@ -57,6 +57,7 @@ export class ProductController {
     );
   }
 
+  /*
   @authenticate('TokenStrategy')
   @get('/products/count', {
     responses: {
@@ -71,9 +72,11 @@ export class ProductController {
   ): Promise<Count> {
     return await this.productRepository.count(where);
   }
+  */
 
   @authenticate('TokenStrategy')
   @get('/products', {
+    description: 'Получить массив изделий',
     responses: {
       '200': {
         description: 'Array of Product model instances',
@@ -111,6 +114,7 @@ export class ProductController {
 
   @authenticate('TokenStrategy')
   @get('/products/{id}', {
+    description: 'Получить изделие по его id',
     responses: {
       '200': {
         description: 'Product model instance',
@@ -124,6 +128,7 @@ export class ProductController {
 
   @authenticate('TokenStrategy')
   @patch('/products/{id}', {
+    description: 'Обновить изделие по id',
     responses: {
       '204': {
         description: 'Product PATCH success',
@@ -139,6 +144,7 @@ export class ProductController {
 
   @authenticate('TokenStrategy')
   @post('/products/duplicate/{id}', {
+    description: 'Скопировать изделие',
     responses: {
       '200': {
         description: 'Duplicate product model instance',
@@ -176,6 +182,7 @@ export class ProductController {
 
   @authenticate('TokenStrategy')
   @del('/products/{id}', {
+    description: 'Удалить изделие',
     responses: {
       '204': {
         description: 'Product DELETE success',
@@ -189,6 +196,7 @@ export class ProductController {
 
   @authenticate('TokenStrategy')
   @get('/products/{id}/getPreliminaryPrice', {
+    description: 'Посчитать примерную цену изделия',
     responses: {
       '200': {
         description: 'Предварительная цена изделия',

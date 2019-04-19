@@ -32,9 +32,10 @@ export class UserController {
 
   @authenticate('TokenStrategy')
   @post('/users', {
+    description: 'Создать пользователя',
     responses: {
       '200': {
-        description: 'Создать пользователя',
+        description: 'Пользователь создан',
         content: { 'application/json': { schema: { 'x-ts-type': UserForRegisterByAdmin } } },
       },
     },
@@ -49,6 +50,7 @@ export class UserController {
       });
   }
 
+  /*
   @get('/users/count', {
     responses: {
       '200': {
@@ -62,12 +64,14 @@ export class UserController {
   ): Promise<Count> {
     return await this.userRepository.count(where);
   }
+  */
 
   @authenticate('TokenStrategy')
   @get('/users', {
+    description: 'Получить массив пользователей',
     responses: {
       '200': {
-        description: 'Array of User model instances',
+        description: 'Массив пользователей',
         content: {
           'application/json': {
             schema: { type: 'array', items: { 'x-ts-type': User } },
@@ -104,9 +108,10 @@ export class UserController {
 
   @authenticate('TokenStrategy')
   @get('/users/{id}', {
+    description: 'Получить пользователя по id',
     responses: {
       '200': {
-        description: 'User model instance',
+        description: 'Экземпляр пользователя',
         content: { 'application/json': { schema: { 'x-ts-type': User } } },
       },
     },
@@ -120,6 +125,7 @@ export class UserController {
 
   @authenticate('TokenStrategy')
   @patch('/users/{id}', {
+    description: 'Обновить пользователя по id',
     responses: {
       '204': {
         description: 'User PATCH success',
@@ -154,6 +160,7 @@ export class UserController {
 
   @authenticate('TokenStrategy')
   @del('/users/{id}', {
+    description: 'Удалить пользователя',
     responses: {
       '204': {
         description: 'User DELETE success',

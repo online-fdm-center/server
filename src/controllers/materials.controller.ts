@@ -32,6 +32,7 @@ export class MaterialsController {
 
   @authenticate('TokenStrategy')
   @post('/materials', {
+    description: 'Создать материал',
     responses: {
       '200': {
         description: 'Materials model instance',
@@ -62,9 +63,10 @@ export class MaterialsController {
 
   @authenticate('TokenStrategy')
   @get('/materials', {
+    description: 'Получить массив материалов',
     responses: {
       '200': {
-        description: 'Array of Materials model instances',
+        description: 'Массив материалов',
         content: {
           'application/json': {
             schema: { type: 'array', items: { 'x-ts-type': Materials } },
@@ -102,6 +104,7 @@ export class MaterialsController {
 
   @authenticate('TokenStrategy')
   @get('/materials/{id}', {
+    description: 'Получить материал по его id',
     responses: {
       '200': {
         description: 'Materials model instance',
@@ -119,6 +122,7 @@ export class MaterialsController {
 
   @authenticate('TokenStrategy')
   @patch('/materials/{id}', {
+    description: 'Обновить материал по его id',
     responses: {
       '204': {
         description: 'Materials PATCH success',
@@ -154,6 +158,7 @@ export class MaterialsController {
 
   @authenticate('TokenStrategy')
   @del('/materials/{id}', {
+    description: 'Удалить материал',
     responses: {
       '204': {
         description: 'Materials DELETE success',
