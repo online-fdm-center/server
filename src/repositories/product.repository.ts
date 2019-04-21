@@ -1,10 +1,11 @@
 import { BelongsToAccessor, repository } from '@loopback/repository';
-import { Product, Materials, ThreeDFile, User } from '../models';
+import { Product, Materials, ThreeDFile, User, PrintQuality } from '../models';
 import { DbDataSource } from '../datasources';
 import { inject, Getter } from '@loopback/core';
 import { MaterialsRepository, FileRepository, UserRepository } from '../repositories';
 import { AccessControlCrudRepository } from '../helpers/AccessControlCrudRepository';
 import ac from '../providers/acl.provider'
+import { PrinterQualityRepository } from './printer-quality.repository';
 
 export class ProductRepository extends AccessControlCrudRepository<
   Product,
@@ -22,6 +23,10 @@ export class ProductRepository extends AccessControlCrudRepository<
     User,
     typeof Product.prototype.id
   >;
+  public readonly quality: BelongsToAccessor<
+    PrintQuality,
+    typeof Product.prototype.id
+  >;
   constructor(
     @inject('datasources.db') dataSource: DbDataSource,
     @repository.getter('MaterialsRepository')
@@ -30,6 +35,8 @@ export class ProductRepository extends AccessControlCrudRepository<
     fileRepositoryGetter: Getter<FileRepository>,
     @repository.getter('UserRepository')
     userRepositoryGetter: Getter<UserRepository>,
+    @repository.getter('PrintQualityRepository')
+    qualityRepositoryGetter: Getter<PrinterQualityRepository>,
   ) {
     super(Product, dataSource, ac, 'userId');
     this.material = this.createBelongsToAccessorFor(
@@ -44,5 +51,9 @@ export class ProductRepository extends AccessControlCrudRepository<
       'user',
       userRepositoryGetter,
     );
+    this.quality = this.createBelongsToAccessorFor(
+      'quality',
+      qualityRepositoryGetter
+    )
   }
 }

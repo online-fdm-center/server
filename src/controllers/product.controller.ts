@@ -215,9 +215,17 @@ export class ProductController {
   })
   async getPreliminaryPrice(@param.path.number('id') id: number): Promise<PreliminaryPrice> {
     //const product = await this.productRepository.acFindById(id, {}, { role: this.currentuser.group, userId: this.currentuser.id.toString() });
+    const material = await this.productRepository.material(id)
+    if (!material) {
+      return { preliminaryPrice: null }
+    }
+    const quality = await this.productRepository.quality(id)
+    if (!quality) {
+      return { preliminaryPrice: null }
+    }
     const file = await this.productRepository.file(id)
     if (file.status === 'PROCESSED' && file.amount) {
-      return { preliminaryPrice: Math.max(file.amount * 1.05 * 15) }
+      return { preliminaryPrice: file.amount * material.price * quality.factor }
     } else {
       return { preliminaryPrice: null }
     }
