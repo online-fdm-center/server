@@ -2,7 +2,7 @@ import { Entity, model, property, hasMany } from '@loopback/repository';
 import { Product } from './product.model'
 
 @model()
-export class Materials extends Entity {
+export class PrintQuality extends Entity {
   @property({
     type: 'number',
     id: true,
@@ -14,33 +14,23 @@ export class Materials extends Entity {
     type: 'string',
     required: true,
   })
-  type: string;
+  name: string;
 
-  @property({
-    type: 'string',
-  })
-  color?: string;
-
-  @property({
-    type: 'number',
-  })
-  count?: number;
-
-  /**Цена в рублях за см^3 */
+  /**Множитель цены */
   @property({
     type: 'number',
     dataType: 'decimal',
     precision: 10,
     scale: 2,
     required: true,
-    default: 20,
+    default: 1,
   })
-  price: number;
+  factor: number;
 
-  @hasMany(() => Product, { keyTo: 'materialId' })
+  @hasMany(() => Product, { keyTo: 'qualityId' })
   products?: Product[];
 
-  constructor(data?: Partial<Materials>) {
+  constructor(data?: Partial<PrintQuality>) {
     super(data);
   }
 }

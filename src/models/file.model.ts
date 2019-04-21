@@ -55,7 +55,7 @@ export class ThreeDFile extends Entity {
   })
   amount?: number;
 
-  @hasMany(() => Product, { keyTo: 'materialId' })
+  @hasMany(() => Product, { keyTo: 'fileId' })
   products?: Product[];
 
   constructor(data?: Partial<ThreeDFile>) {

@@ -104,8 +104,8 @@ export class User extends Entity {
 @model()
 export class UserForRegisterByAdmin extends UserForRegister {
   @property({
-    type: 'string',
-    default: User.groups.TEMPORARY_USER,
+    type: 'enum',
+    default: UserGroups.TEMPORARY_USER
   })
   group: UserGroups;
 }

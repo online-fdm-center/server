@@ -1,5 +1,5 @@
 import { Entity, model, property, belongsTo } from '@loopback/repository';
-import { ThreeDFile, Materials, User } from './index'
+import { ThreeDFile, Materials, User, PrintQuality } from './index'
 
 @model({
   settings: {
@@ -20,7 +20,13 @@ import { ThreeDFile, Materials, User } from './index'
         name: 'FK_Product_File',
         foreignKey: 'fileId',
         entityKey: 'id',
-        entity: 'File'
+        entity: 'ThreeDFile'
+      },
+      qualityId: {
+        name: 'FK_Product_PrintQuality',
+        foreignKey: 'qualityId',
+        entityKey: 'id',
+        entity: 'PrintQuality'
       }
     }
   }
@@ -53,6 +59,9 @@ export class Product extends Entity {
   @belongsTo(() => Materials)
   materialId?: number;
 
+  @belongsTo(() => PrintQuality)
+  qualityId?: number
+
   @property({
     type: 'number',
     required: true,
@@ -65,6 +74,13 @@ export class Product extends Entity {
   })
   status?: string;
 
+  @property({
+    type: 'number',
+    dataType: 'decimal',
+    precision: 10,
+    scale: 2,
+  })
+  price?: number
 
   constructor(data?: Partial<Product>) {
     super(data);
