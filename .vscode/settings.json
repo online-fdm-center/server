@@ -18,5 +18,6 @@
   "tslint.ignoreDefinitionFiles": true,
   "typescript.tsdk": "./node_modules/typescript/lib",
   "editor.formatOnSave": true,
-  "editor.formatOnPaste": true
+  "editor.formatOnPaste": true,
+  "javascript.implicitProjectConfig.experimentalDecorators": true
 }
