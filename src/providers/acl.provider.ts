@@ -1,5 +1,5 @@
 import { AccessControl } from 'accesscontrol';
-import { User, Product, Materials, ThreeDFile } from '../models';
+import { User, Product, Materials, ThreeDFile, PrintQuality } from '../models';
 const ac = new AccessControl();
 
 ac.grant(User.groups.TEMPORARY_USER)
@@ -35,6 +35,11 @@ ac.grant(User.groups.OPERATOR)
   .createAny(Materials.modelName)
   .updateAny(Materials.modelName)
   .deleteAny(Materials.modelName)
+
+  .createAny(PrintQuality.modelName)
+  .readAny(PrintQuality.modelName)
+  .updateAny(PrintQuality.modelName)
+  .deleteAny(PrintQuality.modelName)
 
 ac.grant(User.groups.ADMIN)
   .extend(User.groups.OPERATOR)

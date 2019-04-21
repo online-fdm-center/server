@@ -18,7 +18,6 @@ import {
 } from '@loopback/rest';
 import { Materials, User } from '../models';
 import { MaterialsRepository } from '../repositories';
-import ac = require('../providers/acl.provider');
 import { authenticate, AuthenticationBindings } from '@loopback/authentication';
 import { inject } from '@loopback/core';
 
