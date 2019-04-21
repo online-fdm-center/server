@@ -7,22 +7,34 @@ export class Materials extends Entity {
     type: 'number',
     id: true,
     generated: true,
+    jsonSchema: {
+      title: 'ID'
+    },
   })
   id?: number;
 
   @property({
     type: 'string',
     required: true,
+    jsonSchema: {
+      title: 'Тип'
+    },
   })
   type: string;
 
   @property({
     type: 'string',
+    jsonSchema: {
+      title: 'Цвет'
+    },
   })
   color?: string;
 
   @property({
     type: 'number',
+    jsonSchema: {
+      title: 'Количество'
+    },
   })
   count?: number;
 
@@ -34,6 +46,9 @@ export class Materials extends Entity {
     scale: 2,
     required: true,
     default: 20,
+    jsonSchema: {
+      title: 'Цена'
+    },
   })
   price: number;
 

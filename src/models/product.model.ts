@@ -36,17 +36,26 @@ export class Product extends Entity {
     type: 'number',
     id: true,
     generated: true,
+    jsonSchema: {
+      title: 'ID'
+    },
   })
   id?: number;
 
   @property({
     type: 'string',
     required: true,
+    jsonSchema: {
+      title: 'Название'
+    },
   })
   name: string;
 
   @property({
     type: 'string',
+    jsonSchema: {
+      title: 'Описание'
+    },
   })
   description?: string;
 
@@ -66,11 +75,17 @@ export class Product extends Entity {
     type: 'number',
     required: true,
     default: 1,
+    jsonSchema: {
+      title: 'Количество'
+    },
   })
   count: number;
 
   @property({
     type: 'string',
+    jsonSchema: {
+      title: 'Статус'
+    },
   })
   status?: string;
 
@@ -79,6 +94,9 @@ export class Product extends Entity {
     dataType: 'decimal',
     precision: 10,
     scale: 2,
+    jsonSchema: {
+      title: 'Цена'
+    },
   })
   price?: number
 

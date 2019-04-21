@@ -7,17 +7,26 @@ export class Printer extends Entity {
     type: 'number',
     id: true,
     generated: true,
+    jsonSchema: {
+      title: 'ID'
+    },
   })
   id?: number;
 
   @property({
     type: 'string',
+    jsonSchema: {
+      title: 'Токен'
+    },
   })
   token?: string;
 
   @property({
     type: 'string',
     required: true,
+    jsonSchema: {
+      title: 'Название'
+    },
   })
   name: string;
 

@@ -7,12 +7,18 @@ export class PrintQuality extends Entity {
     type: 'number',
     id: true,
     generated: true,
+    jsonSchema: {
+      title: 'ID'
+    },
   })
   id?: number;
 
   @property({
     type: 'string',
     required: true,
+    jsonSchema: {
+      title: 'Название'
+    },
   })
   name: string;
 
@@ -24,6 +30,9 @@ export class PrintQuality extends Entity {
     scale: 2,
     required: true,
     default: 1,
+    jsonSchema: {
+      title: 'Множитель'
+    },
   })
   factor: number;
 
