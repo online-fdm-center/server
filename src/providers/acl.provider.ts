@@ -18,6 +18,8 @@ ac.grant(User.groups.TEMPORARY_USER)
 
   .readAny(Materials.modelName)
 
+  .readAny(PrintQuality.modelName)
+
 ac.grant(User.groups.USER)
   .extend(User.groups.TEMPORARY_USER)
   .createOwn('productApprove')//Может подтверждать заявку на печать
