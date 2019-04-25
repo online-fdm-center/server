@@ -35,7 +35,7 @@ export class ProductRepository extends AccessControlCrudRepository<
     fileRepositoryGetter: Getter<FileRepository>,
     @repository.getter('UserRepository')
     userRepositoryGetter: Getter<UserRepository>,
-    @repository.getter('PrintQualityRepository')
+    @repository.getter('PrinterQualityRepository')
     qualityRepositoryGetter: Getter<PrinterQualityRepository>,
   ) {
     super(Product, dataSource, ac, 'userId');
