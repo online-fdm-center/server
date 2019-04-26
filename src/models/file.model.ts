@@ -2,6 +2,15 @@ import { Entity, model, property, hasMany } from '@loopback/repository';
 import { Product } from './product.model'
 
 @model()
+export class ThreeDFileImage {
+  @property({
+    type: 'string',
+    require: true
+  })
+  image: string
+}
+
+@model()
 export class ThreeDFile extends Entity {
   static statuses = {
     WAITING_FOR_PROCESSING: 'WAITING_FOR_PROCESSING',
@@ -58,7 +67,7 @@ export class ThreeDFile extends Entity {
   @property({
     type: 'string'
   })
-  image?: string;
+  image?: string | null;
 
   @hasMany(() => Product, { keyTo: 'fileId' })
   products?: Product[];

@@ -1,8 +1,8 @@
 import * as path from 'path';
 import { inject } from '@loopback/context';
 import { FileRepository } from '../repositories';
-import { ThreeDFile } from '../models'
-import { repository } from '@loopback/repository';
+import { ThreeDFile, ThreeDFileImage } from '../models'
+import { repository, model, property } from '@loopback/repository';
 import {
   post,
   requestBody,
@@ -51,6 +51,7 @@ export class FileController {
         content: { 'application/json': { schema: { 'x-ts-type': ThreeDFile } } },
       },
     },
+    security: [{ authToken: [] }],
   })
   async create(
     @requestBody({
@@ -101,6 +102,7 @@ export class FileController {
         content: { 'application/json': { schema: { 'x-ts-type': ThreeDFile } } },
       },
     },
+    security: [{ authToken: [] }],
   })
   async getFileToProcess(): Promise<ThreeDFile | null> {
     const file = await this.fileRepository.findOne({
@@ -128,10 +130,50 @@ export class FileController {
     },
     security: [{ authToken: [] }],
   })
-  async updateById(
+  async setAmount(
     @param.path.number('id') id: number,
     @requestBody() data: ThreeDFileAmount,
   ): Promise<void> {
     await this.fileRepository.updateById(id, { ...data, status: 'PROCESSED' })
   }
+
+  @authenticate('TokenStrategy')
+  @post('/getFileToRender', {
+    description: 'Получить файл для обработки рендером.',
+    responses: {
+      '200': {
+        description: 'File model instance',
+        content: { 'application/json': { schema: { 'x-ts-type': ThreeDFile } } },
+      },
+    },
+    security: [{ authToken: [] }],
+  })
+  async getFileToRender(): Promise<ThreeDFile | null> {
+    const file = await this.fileRepository.findOne({
+      where: {
+        image: {
+          eq: null
+        }
+      }
+    })
+    return file;
+  }
+
+  @authenticate('TokenStrategy')
+  @post('/files/{id}/setImage', {
+    description: 'Устанавливает изображение в 3d файле.',
+    responses: {
+      '204': {
+        description: 'Объем модели сохранен',
+      },
+    },
+    security: [{ authToken: [] }],
+  })
+  async setImage(
+    @param.path.number('id') id: number,
+    @requestBody() data: ThreeDFileImage,
+  ): Promise<void> {
+    await this.fileRepository.updateById(id, { ...data })
+  }
+
 }
