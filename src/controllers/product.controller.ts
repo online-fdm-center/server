@@ -230,4 +230,32 @@ export class ProductController {
       return { preliminaryPrice: null }
     }
   }
+
+  @authenticate('TokenStrategy')
+  @get('/products/{id}/getImage', {
+    description: 'Получить ссылку на рендер',
+    responses: {
+      '200': {
+        description: 'Ссылка на рендер',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                image: {
+                  type: 'string'
+                }
+              }
+            }
+          }
+        }
+      },
+    },
+  })
+  async getImage(@param.path.number('id') id: number): Promise<{ image: string }> {
+    const file = await this.productRepository.file(id)
+    return {
+      image: file && file.image ? file.image : 'error.png'
+    }
+  }
 }
