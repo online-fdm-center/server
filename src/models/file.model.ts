@@ -55,6 +55,11 @@ export class ThreeDFile extends Entity {
   })
   amount?: number;
 
+  @property({
+    type: 'string'
+  })
+  image?: string;
+
   @hasMany(() => Product, { keyTo: 'fileId' })
   products?: Product[];
 
