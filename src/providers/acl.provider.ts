@@ -1,11 +1,13 @@
 import { AccessControl } from 'accesscontrol';
 import { User, Product, Materials, ThreeDFile, PrintQuality } from '../models';
+import { ProductStatuses } from '../models/product.model'
 const ac = new AccessControl();
 
 ac.grant(User.groups.TEMPORARY_USER)
   .createOwn(Product.modelName)
   .readOwn(Product.modelName)
   .updateOwn(Product.modelName, ['name', 'description', 'materialId', 'qualityId', 'count'])
+  .updateOwn(Product.modelName, [`status.${ProductStatuses.DELETED}`])
   .deleteOwn(Product.modelName)
 
   .createOwn(User.modelName)
@@ -22,7 +24,11 @@ ac.grant(User.groups.TEMPORARY_USER)
 
 ac.grant(User.groups.USER)
   .extend(User.groups.TEMPORARY_USER)
-  .createOwn('productApprove')//Может подтверждать заявку на печать
+  .updateOwn(Product.modelName,
+    [
+      `status.${ProductStatuses.OPERATORS_CHECK}`,
+      `status.${ProductStatuses.REFUND_BY_USER}`
+    ])
 
 ac.grant(User.groups.OPERATOR)
   .extend(User.groups.USER)

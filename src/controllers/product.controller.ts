@@ -19,11 +19,12 @@ import {
   requestBody,
   HttpErrors,
 } from '@loopback/rest';
-import { Product, User } from '../models';
+import { Product, ProductStatuses, ProductStatusesTransforms, User } from '../models';
 import { ProductRepository } from '../repositories';
 import { authenticate, AuthenticationBindings } from '@loopback/authentication';
 import { inject } from '@loopback/core';
 import { AcOptions } from '../helpers/AccessControlCrudRepository'
+import ac from '../providers/acl.provider'
 
 @model()
 class PreliminaryPrice {
@@ -31,6 +32,18 @@ class PreliminaryPrice {
     type: 'number'
   })
   preliminaryPrice: number | null
+}
+
+@model()
+class ProductStatus {
+  @property({
+    type: 'string',
+    jsonSchema: {
+      enum: Object.keys(ProductStatuses)
+    },
+
+  })
+  status: ProductStatuses;
 }
 
 export class ProductController {
@@ -256,6 +269,30 @@ export class ProductController {
     const file = await this.productRepository.file(id)
     return {
       image: file && file.image ? file.image : 'error.png'
+    }
+  }
+
+  @authenticate('TokenStrategy')
+  @post('/products/{id}/setStatus', {
+    description: 'Поменять статус изделия',
+    responses: {
+      '204': {
+        description: 'Статус сменен',
+      },
+    },
+  })
+  async setStatus(
+    @param.path.number('id') id: number,
+    @requestBody() { status }: ProductStatus
+  ): Promise<void> {
+    if (!status) {
+      throw new HttpErrors.UnprocessableEntity('Неверный статус')
+    }
+    const product = await this.productRepository.acFindById(id, {}, this.acOptions)
+    if (ProductStatusesTransforms[product.status].includes(status)) {
+      return this.productRepository.acUpdateEnumFieldById(id, { status }, this.acOptions)
+    } else {
+      throw new HttpErrors.MethodNotAllowed()
     }
   }
 }

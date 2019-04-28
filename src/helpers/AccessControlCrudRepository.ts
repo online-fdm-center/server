@@ -105,6 +105,54 @@ export class AccessControlCrudRepository<T extends Entity, ID> extends DefaultCr
     throw new HttpErrors.Forbidden('Not allowed to update entity');
   }
 
+  /**
+   * Обновляет enumerated поле в базе с учетом контроля доступа
+   * @param id id сущности
+   * @param data объект с полями, которые надо обновить
+   * @param options параметры
+   * @param options.role группа пользователя, который обновляет сущность
+   * @param options.userId id пользователя, который обновляет сущность
+   */
+  async acUpdateEnumFieldById(id: ID, data: DataObject<T>, options: AcOptions): Promise<void> {
+    /**Пермишен на обновление всех сущностей */
+    const permissionUpdateAny = this.ac.can(options.role).updateAny(this.entityClass.modelName)
+    //Если пользователь может обновлять любые сущности
+    if (permissionUpdateAny.granted) {
+      //Если пользователь может обновлять любые атрибуты в сущности
+      if (permissionUpdateAny.attributes.includes('*')) {
+        return super.updateById(id, data)
+      }
+      for (let key in data) {
+        //Если пользователь не может устанавливать какое нибудь значение в поле
+        if (!permissionUpdateAny.attributes.includes(`${key}.${data[key]}`)) {
+          throw new HttpErrors.Forbidden()
+        }
+      }
+      return super.updateById(id, data)
+    }
+    const permissionUpdateOwn = this.ac.can(options.role).updateOwn(this.entityClass.modelName);
+    if (permissionUpdateOwn.granted && this.userField && options.userId) {
+      const entity = await super.findById(id);
+      const isOwn = entity.hasOwnProperty(this.userField) &&
+        String(entity[this.userField as keyof T]) === options.userId
+      if (isOwn) {
+        if (permissionUpdateOwn.attributes.includes('*')) {
+          return super.updateById(id, data)
+        }
+        for (let key in data) {
+          //Если пользователь не может устанавливать какое нибудь значение в поле
+          if (!permissionUpdateOwn.attributes.includes(`${key}.${data[key]}`)) {
+            throw new HttpErrors.Forbidden()
+          }
+        }
+        return super.updateById(id, data)
+      } else {
+        throw new HttpErrors.Forbidden('Not allowed to update not own entity');
+      }
+    }
+    throw new HttpErrors.Forbidden('Not allowed to update entity');
+  }
+
   async acDeleteById(id: ID, options: AcOptions): Promise<void> {
     const permissionDeleteAny = this.ac.can(options.role).deleteAny(this.entityClass.modelName);
     if (permissionDeleteAny.granted) {
