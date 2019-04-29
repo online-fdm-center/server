@@ -6,8 +6,9 @@ const ac = new AccessControl();
 ac.grant(User.groups.TEMPORARY_USER)
   .createOwn(Product.modelName)
   .readOwn(Product.modelName)
-  .updateOwn(Product.modelName, ['name', 'description', 'materialId', 'qualityId', 'count'])
-  .updateOwn(Product.modelName, [`status.${ProductStatuses.DELETED}`])
+  .updateOwn(Product.modelName, ['name', 'description', 'materialId', 'qualityId', 'count',
+    `status.${ProductStatuses.DELETED}`
+  ])
   .deleteOwn(Product.modelName)
 
   .createOwn(User.modelName)
