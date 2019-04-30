@@ -178,8 +178,11 @@ export class ProductController {
     @param.path.number('id') id: number
   ): Promise<Product> {
     const product = await this.productRepository.acFindById(id, {}, this.acOptions);
+    if (product.status === ProductStatuses.UNPRINTABLE || product.status === ProductStatuses.PROCESSING_ERROR) {
+      throw new HttpErrors.MethodNotAllowed()
+    }
     if (product) {
-      return this.productRepository.create({ ...product, id: undefined, userId: this.currentuser.id });
+      return this.productRepository.create({ ...product, id: undefined, userId: this.currentuser.id, status: ProductStatuses.READY_FOR_PRINTING });
     } else {
       throw new HttpErrors.NotFound();
     }

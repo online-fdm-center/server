@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { inject } from '@loopback/context';
 import { FileRepository } from '../repositories';
-import { ThreeDFile, ThreeDFileImage } from '../models'
+import { ThreeDFile, ThreeDFileImage, ProductStatuses } from '../models'
 import { repository, model, property } from '@loopback/repository';
 import {
   post,
@@ -122,7 +122,7 @@ export class FileController {
 
   @authenticate('TokenStrategy')
   @post('/files/{id}/setAmount', {
-    description: 'Устанавливает объем модели в 3d файле.',
+    description: 'Устанавливает объем модели в 3d файле, изменяет статус файла и изделий',
     responses: {
       '204': {
         description: 'Объем модели сохранен',
@@ -135,6 +135,24 @@ export class FileController {
     @requestBody() data: ThreeDFileAmount,
   ): Promise<void> {
     await this.fileRepository.updateById(id, { ...data, status: 'PROCESSED' })
+    await this.fileRepository.products(id).patch({ status: ProductStatuses.READY_FOR_PRINTING })
+  }
+
+  @authenticate('TokenStrategy')
+  @post('/files/{id}/setProcessFailed', {
+    description: 'Устанавливает статус ошибки обработки.',
+    responses: {
+      '204': {
+        description: 'Объем модели сохранен',
+      },
+    },
+    security: [{ authToken: [] }],
+  })
+  async setProcessFailed(
+    @param.path.number('id') id: number,
+  ): Promise<void> {
+    await this.fileRepository.updateById(id, { status: ProductStatuses.PROCESSING_ERROR })
+    await this.fileRepository.products(id).patch({ status: ProductStatuses.PROCESSING_ERROR })
   }
 
   @authenticate('TokenStrategy')
