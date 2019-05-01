@@ -6,6 +6,7 @@ import {
   Where,
   model,
   property,
+  DataObject
 } from '@loopback/repository';
 import {
   post,
@@ -19,7 +20,7 @@ import {
   requestBody,
   HttpErrors,
 } from '@loopback/rest';
-import { Product, ProductStatuses, ProductStatusesTransforms, User } from '../models';
+import { Product, ProductStatuses, ProductStatusesTransforms, User, ThreeDFile } from '../models';
 import { ProductRepository } from '../repositories';
 import { authenticate, AuthenticationBindings } from '@loopback/authentication';
 import { inject } from '@loopback/core';
@@ -147,8 +148,13 @@ export class ProductController {
     },
     security: [{ authToken: [] }],
   })
-  async findById(@param.path.number('id') id: number): Promise<Product> {
-    return await this.productRepository.acFindById(id, {}, this.acOptions);
+  async findById(@param.path.number('id') id: number): Promise<DataObject<Product>> {
+    const product = await this.productRepository.acFindById(id, {}, this.acOptions);
+    const file = await this.productRepository.file(id);
+    return {
+      ...product,
+      file
+    }
   }
 
   @authenticate('TokenStrategy')

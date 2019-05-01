@@ -145,7 +145,9 @@ export class Product extends Entity {
   userId: number;
 
   @belongsTo(() => ThreeDFile)
-  fileId?: number;
+  fileId: number;
+
+  file?: ThreeDFile
 
   @belongsTo(() => Materials)
   materialId?: number;
