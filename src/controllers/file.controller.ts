@@ -102,7 +102,7 @@ export class FileController {
         content: { 'application/json': { schema: { 'x-ts-type': ThreeDFile } } },
       },
     },
-    security: [{ authToken: [] }],
+    security: [{ serverToken: [] }],
   })
   async getFileToProcess(): Promise<ThreeDFile | null> {
     const file = await this.fileRepository.findOne({
@@ -129,7 +129,7 @@ export class FileController {
         description: 'Объем модели сохранен',
       },
     },
-    security: [{ authToken: [] }],
+    security: [{ serverToken: [] }],
   })
   async setAmount(
     @param.path.number('id') id: number,
@@ -147,7 +147,7 @@ export class FileController {
         description: 'Объем модели сохранен',
       },
     },
-    security: [{ authToken: [] }],
+    security: [{ serverToken: [] }],
   })
   async setProcessFailed(
     @param.path.number('id') id: number,
@@ -186,7 +186,7 @@ export class FileController {
         description: 'Объем модели сохранен',
       },
     },
-    security: [{ authToken: [] }],
+    security: [{ serverToken: [] }],
   })
   async setImage(
     @param.path.number('id') id: number,

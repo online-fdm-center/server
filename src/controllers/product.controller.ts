@@ -71,6 +71,7 @@ export class ProductController {
         content: { 'application/json': { schema: { 'x-ts-type': Product } } },
       },
     },
+    security: [{ authToken: [] }],
   })
   async create(@requestBody() product: Product): Promise<Product> {
     return await this.productRepository.acCreate(
@@ -109,6 +110,7 @@ export class ProductController {
         },
       },
     },
+    security: [{ authToken: [] }],
   })
   async find(
     @param.query.object('filter', getFilterSchemaFor(Product)) filter?: Filter,
@@ -143,6 +145,7 @@ export class ProductController {
         content: { 'application/json': { schema: { 'x-ts-type': Product } } },
       },
     },
+    security: [{ authToken: [] }],
   })
   async findById(@param.path.number('id') id: number): Promise<Product> {
     return await this.productRepository.acFindById(id, {}, this.acOptions);
@@ -156,6 +159,7 @@ export class ProductController {
         description: 'Product PATCH success',
       },
     },
+    security: [{ authToken: [] }],
   })
   async updateById(
     @param.path.number('id') id: number,
@@ -173,6 +177,7 @@ export class ProductController {
         content: { 'application/json': { schema: { 'x-ts-type': Product } } },
       },
     },
+    security: [{ authToken: [] }],
   })
   async duplicateProductById(
     @param.path.number('id') id: number
@@ -213,6 +218,7 @@ export class ProductController {
         description: 'Product DELETE success',
       },
     },
+    security: [{ authToken: [] }],
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.productRepository.acDeleteById(id, this.acOptions);
@@ -228,6 +234,7 @@ export class ProductController {
         content: { 'application/json': { schema: { 'x-ts-type': PreliminaryPrice } } },
       },
     },
+    security: [{ authToken: [] }],
   })
   async getPreliminaryPrice(@param.path.number('id') id: number): Promise<PreliminaryPrice> {
     //const product = await this.productRepository.acFindById(id, {}, { role: this.currentuser.group, userId: this.currentuser.id.toString() });
@@ -267,6 +274,7 @@ export class ProductController {
         }
       },
     },
+    security: [{ authToken: [] }],
   })
   async getImage(@param.path.number('id') id: number): Promise<{ image: string }> {
     const file = await this.productRepository.file(id)
@@ -283,6 +291,7 @@ export class ProductController {
         description: 'Статус сменен',
       },
     },
+    security: [{ authToken: [] }],
   })
   async setStatus(
     @param.path.number('id') id: number,

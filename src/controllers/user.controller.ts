@@ -39,6 +39,7 @@ export class UserController {
         content: { 'application/json': { schema: { 'x-ts-type': UserForRegisterByAdmin } } },
       },
     },
+    security: [{ authToken: [] }],
   })
   async create(@requestBody() user: UserForRegisterByAdmin): Promise<User> {
     return await this.userRepository.acCreate({
@@ -79,6 +80,7 @@ export class UserController {
         },
       },
     },
+    security: [{ authToken: [] }],
   })
   async find(
     @param.query.object('filter', getFilterSchemaFor(User)) filter?: Filter,
@@ -115,6 +117,7 @@ export class UserController {
         content: { 'application/json': { schema: { 'x-ts-type': User } } },
       },
     },
+    security: [{ authToken: [] }],
   })
   async findById(@param.path.number('id') id: number): Promise<User> {
     return await this.userRepository.acFindById(id, {}, {
@@ -131,6 +134,7 @@ export class UserController {
         description: 'User PATCH success',
       },
     },
+    security: [{ authToken: [] }],
   })
   async updateById(
     @param.path.number('id') id: number,
@@ -166,6 +170,7 @@ export class UserController {
         description: 'User DELETE success',
       },
     },
+    security: [{ authToken: [] }],
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.userRepository.acDeleteById(id, {

@@ -58,6 +58,16 @@ export class OnlineFdmCenterApplication extends BootMixin(
             type: 'apiKey',
             name: 'x-auth-token',
             in: 'header'
+          },
+          adminToken: {
+            type: 'apiKey',
+            name: 'x-admin-token',
+            in: 'header',
+          },
+          serverToken: {
+            type: 'apiKey',
+            name: 'x-server-token',
+            in: 'header',
           }
         }
       }

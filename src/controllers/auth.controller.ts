@@ -46,6 +46,7 @@ export class AuthController {
         content: { 'application/json': { schema: { 'x-ts-type': User } } },
       },
     },
+    security: [{ authToken: [] }],
   })
   async register(@requestBody() user: UserForRegister, @inject(AuthenticationBindings.CURRENT_USER) currentuser: User, ): Promise<void> {
     const hashedPassword = await bcrypt.hash(user.password, 10);
@@ -60,6 +61,7 @@ export class AuthController {
         content: { 'application/json': { schema: { 'x-ts-type': AuthToken } } },
       },
     },
+    security: [{ authToken: [] }],
   })
   async auth(@requestBody() mailpass: MailPass, @inject(AuthenticationBindings.CURRENT_USER) currentuser: User): Promise<AuthToken> {
     let dbUser = await this.userRepository.findOne({ where: { mail: mailpass.mail } });
