@@ -12,7 +12,10 @@ export class MailPass {
 
   @property({
     type: 'string',
-    required: true
+    required: true,
+    jsonSchema: {
+      format: 'password'
+    }
   })
   password: string;
 }
@@ -86,6 +89,10 @@ export class User extends Entity {
 
   @property({
     type: 'string',
+    jsonSchema: {
+      title: 'Статус',
+      enum: Object.keys(UserGroups)
+    },
     default: UserGroups.TEMPORARY_USER,
   })
   group: UserGroups;
