@@ -116,6 +116,7 @@ export class FileController {
       await this.fileRepository.updateById(file.id, {
         status: ThreeDFile.statuses.PROCESSING
       });
+      await this.fileRepository.products(file.id).patch({ status: ProductStatuses.PROCESSING })
       return file;
     }
   }
