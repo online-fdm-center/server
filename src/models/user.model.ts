@@ -13,9 +13,6 @@ export class MailPass {
   @property({
     type: 'string',
     required: true,
-    jsonSchema: {
-      format: 'password'
-    }
   })
   password: string;
 }

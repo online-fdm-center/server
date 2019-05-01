@@ -49,9 +49,9 @@ export class MyAuthStrategyProvider implements Provider<Strategy | undefined> {
       this.authTokenRepository.findById(usertoken)
         .then(authToken => {
           if (!authToken) {
-            cb(null, false);
+            return Promise.reject(null)
           } else {
-            return authToken.userId;
+            return Promise.resolve(authToken.userId)
           }
         })
         .then((userId: number) => this.userRepository.findById(userId))
