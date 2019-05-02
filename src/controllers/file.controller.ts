@@ -1,19 +1,21 @@
 import * as path from 'path';
+import * as fs from 'fs'
 import { inject } from '@loopback/context';
 import { FileRepository } from '../repositories';
 import { ThreeDFile, ThreeDFileImage, ProductStatuses } from '../models'
 import { repository, model, property } from '@loopback/repository';
 import {
   post,
+  get,
   requestBody,
   Request,
   Response,
   RestBindings,
   patch,
-  param
+  param,
+  HttpErrors
 } from '@loopback/rest';
 import * as multer from 'multer';
-import { get } from 'https';
 import { authenticate } from '@loopback/authentication';
 
 type ExpressFiles = {
@@ -193,6 +195,31 @@ export class FileController {
     @requestBody() data: ThreeDFileImage,
   ): Promise<void> {
     await this.fileRepository.updateById(id, { ...data })
+  }
+
+  @get('/files/{filename}/download', {
+    description: 'Скачать 3d модель',
+    responses: {
+      '200': {
+        description: 'Файл с 3d моделью',
+        content: {
+          'model/stl': {
+            schema: { type: 'string', format: 'binary' },
+          },
+        },
+      },
+    },
+  })
+  async downloadModel(
+    @param.path.string('filename') filename: string,
+    @inject(RestBindings.Http.RESPONSE) response: Response,
+  ): Promise<fs.ReadStream> {
+    const file = await this.fileRepository.findOne({ where: { filename } })
+    if (!file) {
+      throw new HttpErrors.NotFound()
+    }
+    response.setHeader('Content-Disposition', 'attachment; filename="' + file.filename + '"')
+    return fs.createReadStream(path.join(__dirname, '../../../uploads', file.filename))
   }
 
 }
