@@ -290,6 +290,28 @@ export class ProductController {
   }
 
   @authenticate('TokenStrategy')
+  @get('/products/{id}/file', {
+    description: 'Получить 3d файл изделия',
+    responses: {
+      '200': {
+        description: 'Экземпляр ThreeDFile',
+        content: {
+          'application/json': {
+            schema: {
+              'x-ts-type': ThreeDFile
+            }
+          }
+        }
+      },
+    },
+    security: [{ authToken: [] }],
+  })
+  async getFile(@param.path.number('id') id: number): Promise<ThreeDFile> {
+    const product = await this.productRepository.acFindById(id, {}, this.acOptions)
+    return await this.productRepository.file(product.id)
+  }
+
+  @authenticate('TokenStrategy')
   @post('/products/{id}/setStatus', {
     description: 'Поменять статус изделия',
     responses: {
