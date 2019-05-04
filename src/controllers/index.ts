@@ -5,3 +5,4 @@ export * from './auth.controller';
 export * from './file.controller';
 export * from './user.controller';
 export * from './print-quality.controller';
+export * from './payments.controller';
