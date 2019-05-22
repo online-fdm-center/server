@@ -2,7 +2,7 @@ import * as path from 'path';
 import { inject } from '@loopback/context';
 import { FileRepository } from '../repositories';
 import { ThreeDFile, ThreeDFileImage, ProductStatuses } from '../models'
-import { repository, model, property } from '@loopback/repository';
+import { repository, model, property, Entity, ValueObject } from '@loopback/repository';
 import {
   post,
   requestBody,
@@ -15,6 +15,7 @@ import {
 import * as multer from 'multer';
 import { get } from 'https';
 import { authenticate } from '@loopback/authentication';
+import { EventEmitter } from 'events';
 
 type ExpressFiles = {
   [fieldname: string]: Express.Multer.File[];
@@ -22,6 +23,25 @@ type ExpressFiles = {
 
 type ThreeDFileAmount = {
   amount: number
+}
+
+@model()
+class ProgressEvent extends ValueObject {
+  @property({
+    required: true,
+    type: 'number',
+  })
+  progress: number
+
+  @property({
+    type: 'string',
+  })
+  text?: string
+
+  @property({
+    type: 'string',
+  })
+  error?: string
 }
 
 export class FileController {
@@ -134,26 +154,33 @@ export class FileController {
   async setAmount(
     @param.path.number('id') id: number,
     @requestBody() data: ThreeDFileAmount,
+    @inject('eventEmitter') events: EventEmitter
   ): Promise<void> {
     await this.fileRepository.updateById(id, { ...data, status: 'PROCESSED' })
     await this.fileRepository.products(id).patch({ status: ProductStatuses.READY_FOR_PRINTING })
+    events.emit(`file:sliceProgress`, id, { progress: 1 })
   }
 
   @authenticate('TokenStrategy')
-  @post('/files/{id}/setProcessFailed', {
-    description: 'Устанавливает статус ошибки обработки.',
+  @post('/files/{id}/sliceProgress', {
+    description: 'Уведомляет о прогрессе слайсинга файла',
     responses: {
       '204': {
-        description: 'Объем модели сохранен',
+        description: 'Принято',
       },
     },
     security: [{ serverToken: [] }],
   })
-  async setProcessFailed(
+  async setSliceProgress(
     @param.path.number('id') id: number,
+    @requestBody() data: ProgressEvent,
+    @inject('eventEmitter') events: EventEmitter
   ): Promise<void> {
-    await this.fileRepository.updateById(id, { status: ProductStatuses.PROCESSING_ERROR })
-    await this.fileRepository.products(id).patch({ status: ProductStatuses.PROCESSING_ERROR })
+    if (data.error) {
+      await this.fileRepository.updateById(id, { status: ProductStatuses.PROCESSING_ERROR })
+      await this.fileRepository.products(id).patch({ status: ProductStatuses.PROCESSING_ERROR })
+    }
+    events.emit(`file:sliceProgress`, id, data)
   }
 
   @authenticate('TokenStrategy')
@@ -193,6 +220,24 @@ export class FileController {
     @requestBody() data: ThreeDFileImage,
   ): Promise<void> {
     await this.fileRepository.updateById(id, { ...data })
+  }
+
+  @authenticate('TokenStrategy')
+  @post('/files/{id}/renderProgress', {
+    description: 'Уведомляет о прогрессе рендеринга файла',
+    responses: {
+      '204': {
+        description: 'Принято',
+      },
+    },
+    security: [{ serverToken: [] }],
+  })
+  async setRenderProgress(
+    @param.path.number('id') id: number,
+    @requestBody() data: ProgressEvent,
+    @inject('eventEmitter') events: EventEmitter
+  ): Promise<void> {
+    events.emit(`file:renderProgress`, id, data)
   }
 
 }
