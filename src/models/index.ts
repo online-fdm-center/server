@@ -6,3 +6,4 @@ export * from './auth-token.model';
 export * from './print-quality.model';
 export * from './printer-log.model';
 export * from './printer.model';
+export * from './progressEvent.model';

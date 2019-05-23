@@ -14,6 +14,7 @@ import {
   AuthenticationComponent,
   AuthenticationBindings,
 } from '@loopback/authentication';
+import * as EventEmitter from 'events'
 
 export class OnlineFdmCenterApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
@@ -72,6 +73,13 @@ export class OnlineFdmCenterApplication extends BootMixin(
         }
       }
     })
+
+    this.bind('eventEmitter').to(new EventEmitter())
+    this.get<EventEmitter>('eventEmitter')
+      .then(events => {
+        events.on('file:sliceProgress', console.log)
+        events.on('file:renderProgress', console.log)
+      })
 
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here
