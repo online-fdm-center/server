@@ -25,24 +25,7 @@ type ThreeDFileAmount = {
   amount: number
 }
 
-@model()
-class ProgressEvent extends ValueObject {
-  @property({
-    required: true,
-    type: 'number',
-  })
-  progress: number
-
-  @property({
-    type: 'string',
-  })
-  text?: string
-
-  @property({
-    type: 'string',
-  })
-  error?: string
-}
+import { ProgressEvent } from '../models'
 
 export class FileController {
 
@@ -124,7 +107,9 @@ export class FileController {
     },
     security: [{ serverToken: [] }],
   })
-  async getFileToProcess(): Promise<ThreeDFile | null> {
+  async getFileToProcess(
+    @inject('eventEmitter') events: EventEmitter
+  ): Promise<ThreeDFile | null> {
     const file = await this.fileRepository.findOne({
       where: {
         status: ThreeDFile.statuses.WAITING_FOR_PROCESSING
@@ -137,6 +122,10 @@ export class FileController {
         status: ThreeDFile.statuses.PROCESSING
       });
       await this.fileRepository.products(file.id).patch({ status: ProductStatuses.PROCESSING })
+      events.emit(`file:sliceProgress`, file.id, {
+        progress: 0.05,
+        text: 'Слайсинг файла начат'
+      })
       return file;
     }
   }

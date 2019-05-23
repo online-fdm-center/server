@@ -20,12 +20,13 @@ import {
   requestBody,
   HttpErrors,
 } from '@loopback/rest';
-import { Product, ProductStatuses, ProductStatusesTransforms, User, ThreeDFile } from '../models';
+import { Product, ProductStatuses, ProductStatusesTransforms, User, ThreeDFile, ProgressEvent } from '../models';
 import { ProductRepository } from '../repositories';
 import { authenticate, AuthenticationBindings } from '@loopback/authentication';
 import { inject } from '@loopback/core';
 import { AcOptions } from '../helpers/AccessControlCrudRepository'
 import ac from '../providers/acl.provider'
+import * as EventEmitter from 'events';
 
 @model()
 class PreliminaryPrice {
@@ -313,4 +314,43 @@ export class ProductController {
       throw new HttpErrors.MethodNotAllowed()
     }
   }
+
+  @authenticate('TokenStrategy')
+  @get('/products/{id}/events', {
+    description: 'Получить события прогресса',
+    responses: {
+      '200': {
+        description: 'Новое событи',
+        content: { 'application/json': { schema: { 'x-ts-type': ProgressEvent } } },
+      },
+    },
+    security: [{ authToken: [] }],
+  })
+  async getEvent(
+    @param.path.number('id') id: number,
+    @inject('eventEmitter') events: EventEmitter
+  ): Promise<ProgressEvent | null> {
+    const product = await this.productRepository.findById(id)
+    return new Promise((resolve) => {
+      let eventsHandler: (id: number, data: ProgressEvent) => void
+      let timeout: NodeJS.Timeout
+
+      eventsHandler = (id, data) => {
+        if (id === product.fileId) {
+          clearTimeout(timeout)
+          events.off('file:sliceProgress', eventsHandler)
+          resolve(data)
+        }
+      }
+
+      timeout = setTimeout(() => {
+        events.off('file:sliceProgress', eventsHandler)
+        resolve(null)
+      }, 20 * 1000)
+
+      events.on('file:sliceProgress', eventsHandler)
+    })
+
+  }
+
 }
