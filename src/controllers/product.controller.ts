@@ -165,23 +165,6 @@ export class ProductController {
     }
   }
 
-  /*
-  @authenticate('TokenStrategy')
-  @put('/products/{id}', {
-    responses: {
-      '204': {
-        description: 'Product PUT success',
-      },
-    },
-  })
-  async replaceById(
-    @param.path.number('id') id: number,
-    @requestBody() product: Product,
-  ): Promise<void> {
-    await this.productRepository.replaceById(id, product);
-  }
-  */
-
   @authenticate('TokenStrategy')
   @del('/products/{id}', {
     description: 'Удалить изделие',

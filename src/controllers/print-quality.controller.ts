@@ -74,23 +74,6 @@ export class PrintQualityController {
     return await this.printerQualityRepository.acFind(filter || {}, this.acOptions);
   }
 
-  /*
-  @patch('/print-qualities', {
-    responses: {
-      '200': {
-        description: 'PrintQuality PATCH success count',
-        content: { 'application/json': { schema: CountSchema } },
-      },
-    },
-  })
-  async updateAll(
-    @requestBody() printQuality: PrintQuality,
-    @param.query.object('where', getWhereSchemaFor(PrintQuality)) where?: Where,
-  ): Promise<Count> {
-    return await this.printerQualityRepository.updateAll(printQuality, where);
-  }
-  */
-
   @authenticate('TokenStrategy')
   @get('/print-qualities/{id}', {
     description: 'Получить качество печати по id',
