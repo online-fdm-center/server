@@ -44,22 +44,6 @@ export class MaterialsController {
     return await this.materialsRepository.acCreate(materials, { role: this.currentuser.group, userId: this.currentuser.id.toString() });
   }
 
-  /*
-  @get('/materials/count', {
-    responses: {
-      '200': {
-        description: 'Materials model count',
-        content: { 'application/json': { schema: CountSchema } },
-      },
-    },
-  })
-  async count(
-    @param.query.object('where', getWhereSchemaFor(Materials)) where?: Where,
-  ): Promise<Count> {
-    return await this.materialsRepository.count(where);
-  }
-  */
-
   @authenticate('TokenStrategy')
   @get('/materials', {
     description: 'Получить массив материалов',
@@ -83,23 +67,6 @@ export class MaterialsController {
       userId: this.currentuser.id.toString()
     });
   }
-
-  /*
-  @patch('/materials', {
-    responses: {
-      '200': {
-        description: 'Materials PATCH success count',
-        content: { 'application/json': { schema: CountSchema } },
-      },
-    },
-  })
-  async updateAll(
-    @requestBody() materials: Materials,
-    @param.query.object('where', getWhereSchemaFor(Materials)) where?: Where,
-  ): Promise<Count> {
-    return await this.materialsRepository.updateAll(materials, where);
-  }
-  */
 
   @authenticate('TokenStrategy')
   @get('/materials/{id}', {
@@ -138,22 +105,6 @@ export class MaterialsController {
       userId: this.currentuser.id.toString()
     });
   }
-
-  /*
-  @put('/materials/{id}', {
-    responses: {
-      '204': {
-        description: 'Materials PUT success',
-      },
-    },
-  })
-  async replaceById(
-    @param.path.number('id') id: number,
-    @requestBody() materials: Materials,
-  ): Promise<void> {
-    await this.materialsRepository.replaceById(id, materials);
-  }
-  */
 
   @authenticate('TokenStrategy')
   @del('/materials/{id}', {

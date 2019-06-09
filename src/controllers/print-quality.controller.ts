@@ -53,22 +53,6 @@ export class PrintQualityController {
     return await this.printerQualityRepository.acCreate(printQuality, this.acOptions);
   }
 
-  /*
-  @get('/print-qualities/count', {
-    responses: {
-      '200': {
-        description: 'PrintQuality model count',
-        content: { 'application/json': { schema: CountSchema } },
-      },
-    },
-  })
-  async count(
-    @param.query.object('where', getWhereSchemaFor(PrintQuality)) where?: Where,
-  ): Promise<Count> {
-    return await this.printerQualityRepository.count(where);
-  }
-  */
-
   @authenticate('TokenStrategy')
   @get('/print-qualities', {
     description: 'Получить качества печати',
@@ -138,22 +122,6 @@ export class PrintQualityController {
   ): Promise<void> {
     await this.printerQualityRepository.acUpdateById(id, printQuality, this.acOptions);
   }
-
-  /*
-  @put('/print-qualities/{id}', {
-    responses: {
-      '204': {
-        description: 'PrintQuality PUT success',
-      },
-    },
-  })
-  async replaceById(
-    @param.path.number('id') id: number,
-    @requestBody() printQuality: PrintQuality,
-  ): Promise<void> {
-    await this.printerQualityRepository.replaceById(id, printQuality);
-  }
-  */
 
   @authenticate('TokenStrategy')
   @del('/print-qualities/{id}', {

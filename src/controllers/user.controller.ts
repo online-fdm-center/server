@@ -51,22 +51,6 @@ export class UserController {
       });
   }
 
-  /*
-  @get('/users/count', {
-    responses: {
-      '200': {
-        description: 'User model count',
-        content: { 'application/json': { schema: CountSchema } },
-      },
-    },
-  })
-  async count(
-    @param.query.object('where', getWhereSchemaFor(User)) where?: Where,
-  ): Promise<Count> {
-    return await this.userRepository.count(where);
-  }
-  */
-
   @authenticate('TokenStrategy')
   @get('/users', {
     description: 'Получить массив пользователей',
@@ -90,23 +74,6 @@ export class UserController {
       userId: this.currentuser.id.toString()
     });
   }
-
-  /*
-  @patch('/users', {
-    responses: {
-      '200': {
-        description: 'User PATCH success count',
-        content: { 'application/json': { schema: CountSchema } },
-      },
-    },
-  })
-  async updateAll(
-    @requestBody() user: User,
-    @param.query.object('where', getWhereSchemaFor(User)) where?: Where,
-  ): Promise<Count> {
-    return await this.userRepository.updateAll(user, where);
-  }
-  */
 
   @authenticate('TokenStrategy')
   @get('/users/{id}', {
@@ -145,22 +112,6 @@ export class UserController {
       userId: this.currentuser.id.toString()
     });
   }
-
-  /*
-  @put('/users/{id}', {
-    responses: {
-      '204': {
-        description: 'User PUT success',
-      },
-    },
-  })
-  async replaceById(
-    @param.path.number('id') id: number,
-    @requestBody() user: User,
-  ): Promise<void> {
-    await this.userRepository.replaceById(id, user);
-  }
-  */
 
   @authenticate('TokenStrategy')
   @del('/users/{id}', {

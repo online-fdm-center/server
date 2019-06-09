@@ -82,23 +82,6 @@ export class ProductController {
     );
   }
 
-  /*
-  @authenticate('TokenStrategy')
-  @get('/products/count', {
-    responses: {
-      '200': {
-        description: 'Product model count',
-        content: { 'application/json': { schema: CountSchema } },
-      },
-    },
-  })
-  async count(
-    @param.query.object('where', getWhereSchemaFor(Product)) where?: Where,
-  ): Promise<Count> {
-    return await this.productRepository.count(where);
-  }
-  */
-
   @authenticate('TokenStrategy')
   @get('/products', {
     description: 'Получить массив изделий',
@@ -119,24 +102,6 @@ export class ProductController {
   ): Promise<Product[]> {
     return await this.productRepository.acFind(filter || {}, this.acOptions);
   }
-
-  /*
-  @authenticate('TokenStrategy')
-  @patch('/products', {
-    responses: {
-      '200': {
-        description: 'Product PATCH success count',
-        content: { 'application/json': { schema: CountSchema } },
-      },
-    },
-  })
-  async updateAll(
-    @requestBody() product: Product,
-    @param.query.object('where', getWhereSchemaFor(Product)) where?: Where,
-  ): Promise<Count> {
-    return await this.productRepository.updateAll(product, where);
-  }
-  */
 
   @authenticate('TokenStrategy')
   @get('/products/{id}', {
