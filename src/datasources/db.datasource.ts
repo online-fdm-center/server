@@ -9,7 +9,7 @@ export class DbDataSource extends juggler.DataSource {
     dsConfig: object = {
       name: 'db',
       connector: 'mysql',
-      url: process.env.MYSQL_URL,//'mysql://root:123321Aa@database/online.fdm.center',
+      url: process.env.MYSQL_URL,//'mysql://root:password@database/online.fdm.center',
     }
     ,
   ) {
