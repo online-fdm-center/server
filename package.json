@@ -57,7 +57,7 @@
     "@types/multer": "^1.3.7",
     "@types/passport-local": "^1.0.33",
     "accesscontrol": "^2.2.1",
-    "bcrypt": "^3.0.4",
+    "bcrypt": "^5.0.0",
     "dotenv": "^7.0.0",
     "loopback-connector-mysql": "^5.3.1",
     "multer": "^1.4.1",
